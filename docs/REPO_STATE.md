@@ -1,84 +1,129 @@
 # Repository Current State
 
-Last updated: 2026-10-02
+Last updated: 2026-10-03
 
 ## Project
 
 Mischa Tangian Portfolio
 
-## Current phase
+## Current Phase
 
-Foundation / restart
+Site shell complete / homepage layout next
 
-The previous prototype is being discarded as an implementation reference.
+The project has been restarted from a clean foundation.
 
-## Current objective
+The previous prototype is considered discarded implementation work. It may be referenced for ideas only and must not dictate the new architecture or provide unverified production content.
 
-Create a clean, maintainable foundation for a bilingual professional artist archive.
+---
 
-## Confirmed from client conversation
+## Current Objective
 
-- German default language.
-- English language switch.
-- Works section.
-- Dates/Calendar section.
-- News and news archive.
-- Direct music playback is preferred.
-- PDF score viewing is preferred.
+Build a clean, maintainable, high-performance bilingual portfolio and digital archive for Mischa Tangian using incremental ticket-based development.
+
+Current focus:
+
+`T0004 - Homepage Editorial Layout`
+
+---
+
+## Completed Tickets
+
+- `T0001 - Project Foundation`
+- `T0002 - Global Design Tokens`
+- `T0003 - Site Shell + Header`
+
+## Current Implementation Status
+
+- React + TypeScript foundation is in place.
+- Global design tokens are available through CSS variables.
+- Shared site shell is implemented with header, desktop navigation, mobile navigation, DE/EN placeholder, page frame, and footer.
+- Minimal route placeholders exist for Home, Works, Dates, News, About, and Contact.
+- No homepage sections have been implemented yet.
+- No real bilingual routing/content logic has been implemented yet.
+- No CMS decision has been made.
+- No audio player or score reader has been implemented.
+- No real client content has been migrated.
+
+---
+
+## Confirmed Client Requirements
+
+- German is the default language.
+- English is available through a DE/EN language switcher.
+- Works catalogue is required.
+- Dates / Calendar / Termine section is required.
+- News section and news archive are required.
+- Homepage should surface recent news.
+- Direct music playback on the website is preferred.
+- Music should not rely primarily on visually embedded third-party players.
+- PDF music scores should be viewable from the website.
 - Photography is important.
-- One meaningful image per page/section is desirable.
-- Client wants to maintain most content personally.
-- Site should load quickly.
-- Effects should be simple and lightweight.
-- Additional menu/submenu items should be possible later.
+- A photograph of Mischa should appear on the website.
+- Supporting photographs may include instruments, orchestras, stages, and concert halls.
+- Client wants to maintain approximately 95% of normal site content without developer assistance.
+- Additional menus/submenus should remain possible later.
+- Performance is a priority.
+- Effects and transitions should remain lightweight.
+- Mobile usability is a priority.
 
-## Design direction
+---
+
+## Design Direction
+
+Design principle:
+
+> Quiet interface, strong typography, warm photography, precise information, and music always one interaction away.
+
+Visual direction:
 
 - editorial
 - modern European
 - minimal
 - warm
+- professional
+- contemporary classical
 - restrained champagne/brass accent
-- strong serif + clean sans pairing
+- editorial serif typography
+- clean sans-serif UI typography
 - deliberate photography
 - subtle motion
+- controlled whitespace
+- thin editorial borders/dividers
 
-## Current implementation status
+Avoid:
 
-No production application features are considered complete.
+- excessive animation
+- WebGL / 3D effects
+- large animated backgrounds
+- unnecessary parallax
+- generic SaaS/dashboard styling
+- visually dominant third-party media widgets
+- unnecessary dependencies
 
-Documentation status:
+---
 
-- `AGENTS.md` — created
-- `docs/PROJECT_DESIGN.md` — created
-- `docs/TICKETS.md` — created
-- `docs/REPO_STATE.md` — created
-- `docs/VERIFICATION.md` — created
-- `docs/FOLLOWUPS.md` — created
-- `README.md` — created
+## Development Workflow
 
-Application status:
+Development follows one ticket at a time.
 
-- foundation not yet considered complete
-- no real client content migrated
-- no CMS decision locked
-- no production audio assets
-- no production score assets
-
-## Important constraints
-
-Do not carry invented content from the previous AI-generated prototype into the production site.
-
-Do not lock the backend/CMS until the client's editing workflow has been validated.
-
-Do not build the whole site in one ticket.
-
-## Next ticket
-
-`T0001 — Project Foundation`
-
-## Blockers
-
-None for the foundation.
-
-Content/CMS questions are tracked in `docs/FOLLOWUPS.md`.
+```text
+Plan / review
+      |
+Select one ticket
+      |
+Create feature branch
+      |
+Codex implements ticket
+      |
+Review Git diff
+      |
+Build / test
+      |
+Manual verification
+      |
+Commit
+      |
+Update REPO_STATE.md
+      |
+Next ticket
+```

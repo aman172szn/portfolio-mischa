@@ -15,7 +15,7 @@ Only one implementation ticket should normally be active at a time.
 
 ## T0001 — Project Foundation
 
-Status: TODO
+Status: DONE
 
 ### Goal
 
