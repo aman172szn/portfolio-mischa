@@ -1,0 +1,121 @@
+:root {
+  color-scheme: light;
+
+  --color-onyx-950: #0f1012;
+  --color-onyx-900: #17191d;
+  --color-slate-700: #666a70;
+  --color-slate-500: #8d9197;
+  --color-paper-100-dark: #f2efe8;
+  --color-paper-200-dark: #d9d4ca;
+  --color-champagne-500: #c5a880;
+  --color-champagne-400: #d2ba94;
+  --color-line-dark: #2a2d31;
+
+  --color-paper-50: #f7f5f0;
+  --color-paper-100: #efebe2;
+  --color-ink-950: #151619;
+  --color-ink-700: #4d5055;
+  --color-ink-500: #74777c;
+  --color-brass-600: #9f8159;
+  --color-line-light: #d8d2c7;
+  --color-white: #ffffff;
+
+  --color-surface: var(--color-paper-50);
+  --color-surface-raised: var(--color-white);
+  --color-surface-muted: var(--color-paper-100);
+  --color-text: var(--color-ink-950);
+  --color-text-muted: var(--color-ink-700);
+  --color-text-subtle: var(--color-ink-500);
+  --color-accent: var(--color-brass-600);
+  --color-border: var(--color-line-light);
+  --color-focus: var(--color-brass-600);
+
+  --font-display: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --font-body: Manrope, Inter, "Segoe UI", system-ui, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  --font-size-micro: 0.6875rem;
+  --font-size-meta: 0.8125rem;
+  --font-size-body: 1rem;
+  --font-size-body-large: 1.0625rem;
+  --font-size-work-title: 1.5rem;
+  --font-size-h3: 1.625rem;
+  --font-size-h2: 2.25rem;
+  --font-size-hero: 3rem;
+
+  --line-height-tight: 1.05;
+  --line-height-heading: 1.12;
+  --line-height-body: 1.6;
+  --line-height-meta: 1.35;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+
+  --page-padding-inline: 1.25rem;
+  --page-max-width: 90rem;
+  --content-max-width: 45rem;
+  --grid-column-count: 12;
+  --grid-gap: var(--space-md);
+
+  --border-width-hairline: 1px;
+  --radius-none: 0;
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-pill: 999px;
+
+  --shadow-subtle: 0 0.0625rem 0.125rem rgb(15 16 18 / 8%);
+  --shadow-soft: 0 1rem 2.5rem rgb(15 16 18 / 10%);
+
+  --duration-instant: 80ms;
+  --duration-fast: 140ms;
+  --duration-standard: 220ms;
+  --duration-slow: 300ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0, 0.12, 1);
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --page-padding-inline: 3rem;
+    --grid-gap: var(--space-lg);
+
+    --font-size-body: 1.0625rem;
+    --font-size-body-large: 1.1875rem;
+    --font-size-work-title: 1.75rem;
+    --font-size-h3: 1.875rem;
+    --font-size-h2: 3rem;
+    --font-size-hero: 4.5rem;
+  }
+}
+
+@media (min-width: 75rem) {
+  :root {
+    --page-padding-inline: 4.5rem;
+
+    --font-size-work-title: 2rem;
+    --font-size-h3: 2.25rem;
+    --font-size-h2: 3.75rem;
+    --font-size-hero: 5.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-instant: 1ms;
+    --duration-fast: 1ms;
+    --duration-standard: 1ms;
+    --duration-slow: 1ms;
+  }
+}
