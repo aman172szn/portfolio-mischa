@@ -1,0 +1,16 @@
+node_modules/
+dist/
+build/
+.vite/
+coverage/
+
+.env
+.env.local
+.env.*
+
+.DS_Store
+Thumbs.db
+
+.vscode/settings.json
+
+*.log
