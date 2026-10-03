@@ -41,12 +41,15 @@ These requirements come directly from the client conversation.
 
 - Website is for Mischa Tangian.
 - Berlin-based.
+- Professional title should be "Composer".
 - German should be the default language.
-- English should be available with a button.
+- English should be available with a button and generated automatically from German content.
 - Client wants a first version quickly.
 - Client wants to upload scores as PDFs.
 - Client prefers scores to open on the website.
+- Full scores should be viewable and downloadable by visitors.
 - Client wants music playable from the website.
+- Every track should be uploaded directly to the site by Mischa through an admin panel.
 - External media can exist as a fallback/secondary source.
 - A primary menu item should exist for dates/calendar.
 - Client wants news.
@@ -55,21 +58,20 @@ These requirements come directly from the client conversation.
 - Client wants one strong image per page/section.
 - A photograph of Mischa should appear somewhere on the site.
 - Client expects to maintain most of the site themselves.
+- Client wants a structured admin dashboard.
+- Initial media volume target is 10 photographs, 10 audio files, and 10 score PDFs, with provision to upgrade storage later.
+- Supabase should be used as the backend: Postgres for structured data, Auth for admin access, and Storage for photographs, audio files, and score PDFs.
 - Future menus/submenus should be possible.
 - Client prefers speed over excessive visual effects.
 
 ### Not yet confirmed
 
-- Exact professional title to display.
 - Final biography.
 - Exact works catalogue and classifications.
-- Which audio files are hosted directly.
 - Whether external audio links need to be supported.
-- Whether score downloads are allowed or only in-browser viewing.
-- Exact CMS.
-- Exact media storage provider.
+- Exact Supabase schema and admin-dashboard screens.
+- Exact Supabase storage bucket policy, limits, and upgrade path.
 - Exact domain/hosting arrangement.
-- Whether the client needs a full admin interface or a simpler content editing workflow.
 - Final visual palette.
 - Final typography.
 
@@ -205,7 +207,8 @@ Suggested desktop columns:
 Actions:
 
 - Listen
-- Score
+- View score
+- Download score
 
 Optional feature cards can be used for selected works.
 
@@ -221,6 +224,7 @@ Suggested structure:
 - description
 - audio
 - score
+- score download
 - performances
 - related news when relevant
 
@@ -345,14 +349,14 @@ Desktop:
 - page navigation
 - fullscreen
 - close
-- request score
+- download score
 
 Mobile:
 
 - near/fullscreen
 - large page area
 - simple controls
-- request action accessible
+- download action accessible
 
 The surrounding interface should feel native to this website even if the PDF rendering engine is third-party.
 
@@ -565,7 +569,7 @@ social_links
 default_language
 ```
 
-The field list is a starting model, not a final schema. Validate it against the client's actual workflow before locking the backend.
+The field list is a starting model, not a final schema. Validate it against the client's actual workflow before locking the Supabase schema.
 
 ## 19. Technology direction
 
@@ -576,14 +580,17 @@ Initial direction from the client discussion:
 - modern CSS/Tailwind
 - client-side audio controls
 - browser-native PDF capabilities or a lightweight PDF viewer
-- a content layer/CMS so the client does not need to edit source code
-- media storage that can handle images, audio, and PDFs
+- Supabase Postgres for structured content
+- Supabase Auth for admin access
+- Supabase Storage for images, audio, and PDFs
+- structured admin dashboard for client uploads and content maintenance
+- automatic English translation from German source content
 
 The project does not require a traditional MERN stack merely because React was chosen.
 
 Do not introduce MongoDB or a custom API/database unless the actual content-management design requires it.
 
-The final hosting/CMS/media stack must be decided in the technical spike.
+The technical spike must validate the Supabase schema, bucket structure, access policies, backup/export approach, and storage upgrade path.
 
 ## 20. Things explicitly out of scope for version 1
 
@@ -597,7 +604,6 @@ The final hosting/CMS/media stack must be decided in the technical spike.
 - large analytics dashboard
 - community features
 - elaborate calendar dashboards
-- automatic translation as the source of truth
 
 ## 21. Client content rule
 

@@ -2,72 +2,37 @@
 
 This file tracks questions that should not be guessed in code.
 
-## Client decisions needed
+## Client decisions
 
 ### 1. Professional title
 
-Confirm the exact title displayed on the website.
-
-Possible examples are not decisions:
-- Composer
-- Conductor
-- Composer / Conductor
-- another title supplied by Mischa
-
-Do not choose based on third-party profiles.
+Decision: display Mischa's professional title as "Composer".
 
 ### 2. German/English content workflow
 
-Confirm whether Mischa wants to:
-
-- write German and English himself
-- provide German and have English translated manually
-- use a machine translation as a draft and manually edit it
-
-The production source of truth should remain reviewed content.
+Decision: Mischa will provide German content. The website should automatically provide the English translation.
 
 ### 3. Audio ownership
 
-For every track determine:
-
-- direct upload to the site
-- external source
-- both
-
-Confirm rights and hosting preference.
+Decision: every track should be uploaded directly to the site through an admin panel by Mischa.
 
 ### 4. Score access
 
-For every score determine:
-
-- public preview
-- public download
-- request-only access
-
-Confirm whether full scores or excerpts should be shown.
+Decision: full scores should be viewable and downloadable by visitors.
 
 ### 5. CMS workflow
 
-Confirm which is more comfortable:
-
-- simple editor/CMS
-- structured admin dashboard
-- Git-based editing
-- another existing tool
-
-The chosen solution should minimize recurring cost and client effort.
+Decision: use a structured admin dashboard.
 
 ### 6. Media storage
 
-Confirm expected volume of:
+Decision: start with 10 photographs, 10 audio files, and 10 score PDFs, with provision to upgrade to more storage later.
 
-- photographs
-- audio files
-- score PDFs
+### 7. Backend and storage
 
-This affects storage/CDN choices.
+Decision: use Supabase as the backend, including Postgres for structured data, Auth for the admin login, and Storage for photographs, audio files, and score PDFs.
 
-### 7. Homepage priority
+### 8. Homepage priority
 
 Ask Mischa to confirm the relative prominence of:
 
@@ -78,7 +43,7 @@ Ask Mischa to confirm the relative prominence of:
 
 Do not infer the final hierarchy from the AI prototype.
 
-### 8. Photography
+### 9. Photography
 
 Need:
 
@@ -92,13 +57,13 @@ Confirm which images are owned/licensed.
 ## Technical follow-ups
 
 - [ ] Choose frontend framework structure
-- [ ] Choose CMS/content layer
-- [ ] Choose media storage
+- [ ] Define Supabase schema/content layer
+- [ ] Configure Supabase Storage buckets
 - [ ] Decide PDF rendering library
 - [ ] Decide waveform generation approach
 - [ ] Decide deployment strategy
 - [ ] Decide analytics, if any
-- [ ] Decide backup/export strategy for CMS content
+- [ ] Decide backup/export strategy for Supabase content and files
 
 ## Design follow-ups
 

@@ -40,7 +40,8 @@ Current focus:
 - Minimal route placeholders exist for Home, Works, Dates, News, About, and Contact.
 - No homepage sections have been implemented yet.
 - No real bilingual routing/content logic has been implemented yet.
-- No CMS decision has been made.
+- Supabase has been selected for the backend: Postgres for structured content, Auth for admin access, and Storage for photographs, audio files, and score PDFs.
+- A structured admin dashboard has been selected as the client content-management direction, but the exact schema, screens, bucket policies, and backup/export approach have not been implemented.
 - No audio player or score reader has been implemented.
 - No real client content has been migrated.
 
@@ -50,13 +51,19 @@ Current focus:
 
 - German is the default language.
 - English is available through a DE/EN language switcher.
+- English content should be translated automatically from German source content.
+- Mischa's professional title should be shown as "Composer".
 - Works catalogue is required.
 - Dates / Calendar / Termine section is required.
 - News section and news archive are required.
 - Homepage should surface recent news.
 - Direct music playback on the website is preferred.
+- Every track should be uploaded directly to the site by Mischa through an admin panel.
 - Music should not rely primarily on visually embedded third-party players.
 - PDF music scores should be viewable from the website.
+- Full scores should be downloadable by visitors.
+- Initial media capacity should cover 10 photographs, 10 audio files, and 10 score PDFs, with a path to upgrade storage later.
+- Supabase is the backend and storage system.
 - Photography is important.
 - A photograph of Mischa should appear on the website.
 - Supporting photographs may include instruments, orchestras, stages, and concert halls.

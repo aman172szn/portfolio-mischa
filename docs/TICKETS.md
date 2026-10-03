@@ -194,13 +194,13 @@ Sections:
 
 ---
 
-## T0005 — Content Model Spike
+## T0005 — Supabase Content Model Spike
 
 Status: TODO
 
 ### Goal
 
-Choose and validate the smallest content-management architecture that allows the client to maintain the site.
+Validate the Supabase content-management architecture that allows the client to maintain the site.
 
 ### Dependencies
 
@@ -211,10 +211,18 @@ T0001.
 Evaluate:
 
 - required content types
+- Supabase Postgres schema
+- Supabase Auth admin access model
+- Supabase Storage bucket structure
+- Supabase Storage access policies
 - bilingual fields
+- automatic English translation from German source content
 - image uploads
 - audio uploads
 - PDF uploads
+- structured admin dashboard workflow
+- initial capacity for 10 photographs, 10 audio files, and 10 score PDFs
+- storage upgrade path
 - draft/publish workflow
 - ease of use for a non-developer
 - cost
@@ -225,12 +233,15 @@ Evaluate:
 
 - migrating all content
 - building every admin screen
+- replacing Supabase with another backend
 
 ### Acceptance criteria
 
-- architecture decision documented
+- Supabase schema decision documented
+- Supabase bucket/policy decision documented
 - estimated recurring cost documented
 - local proof of concept works for one content type
+- proposed storage upgrade path documented
 
 ---
 
@@ -252,11 +263,12 @@ T0003, T0005.
 - English switch
 - no layout shift caused by the selector
 - localized content fields
+- automatic English translation workflow
 - stable URL strategy
 
 ### Non-goals
 
-- machine translation of final content
+- manual translation editing interface beyond the selected content-management workflow
 
 ### Acceptance criteria
 
@@ -362,7 +374,7 @@ T0007.
 - open/close
 - page navigation
 - fullscreen
-- request-score action
+- download score action
 - mobile usability
 
 ### Non-goals
@@ -372,6 +384,7 @@ T0007.
 ### Acceptance criteria
 
 - PDF opens without leaving the site
+- full score can be downloaded
 - large pages are navigable
 - modal can be closed with keyboard
 - page controls are accessible
