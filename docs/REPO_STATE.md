@@ -8,7 +8,7 @@ Mischa Tangian Portfolio
 
 ## Current Phase
 
-Site shell complete / homepage layout next
+Score reader complete / Dates archive next
 
 The project has been restarted from a clean foundation.
 
@@ -22,7 +22,7 @@ Build a clean, maintainable, high-performance bilingual portfolio and digital ar
 
 Current focus:
 
-`T0004 - Homepage Editorial Layout`
+`T0010 - Dates / Concert Archive`
 
 ---
 
@@ -31,17 +31,34 @@ Current focus:
 - `T0001 - Project Foundation`
 - `T0002 - Global Design Tokens`
 - `T0003 - Site Shell + Header`
+- `T0004 - Homepage Editorial Layout`
+- `T0005 - Supabase Content Model Spike`
+- `T0006 - Internationalization`
+- `T0007 - Works Catalogue`
+- `T0008 - Audio Player`
+- `T0009 - Score Reader`
 
 ## Current Implementation Status
 
 - React + TypeScript foundation is in place.
 - Global design tokens are available through CSS variables.
 - Shared site shell is implemented with header, desktop navigation, mobile navigation, DE/EN placeholder, page frame, and footer.
-- Minimal route placeholders exist for Home, Works, Dates, News, About, and Contact.
-- No homepage sections have been implemented yet.
-- No real bilingual routing/content logic has been implemented yet.
+- Homepage sections are implemented with clearly marked placeholder content.
+- Minimal route placeholders exist for Works, Dates, News, About, and Contact.
+- Locale-prefixed routing is implemented for `/de` and `/en`, with `/` redirecting to German by default.
+- The header language switch preserves the current page where practical.
+- Navigation, route placeholders, homepage placeholder content, and footer copy render in the active locale.
+- Works archive and work detail routes are implemented under the locale-prefixed route tree.
+- Works are driven from a local structured content module shaped like the Supabase `works` table, with placeholder content clearly labelled until verified catalogue data is supplied.
+- Work detail pages include description, image, audio placeholder, score placeholder, and performances placeholder sections.
+- A persistent audio player is mounted in the site shell with play/pause, progress, seeking, elapsed/duration display, lightweight waveform bars, mobile compact/expanded states, and one active track at a time.
+- Works with audio expose Listen controls that load the selected work into the persistent player.
+- A site-native score reader overlay is mounted in the site shell with open/close, page controls, fullscreen action, download action, Escape close, and mobile full-height layout.
+- Works with score PDFs expose Score controls that open the selected work in the reader.
 - Supabase has been selected for the backend: Postgres for structured content, Auth for admin access, and Storage for photographs, audio files, and score PDFs.
-- A structured admin dashboard has been selected as the client content-management direction, but the exact schema, screens, bucket policies, and backup/export approach have not been implemented.
+- A structured admin dashboard has been selected as the client content-management direction.
+- The Supabase content model spike is documented in `docs/SUPABASE_CONTENT_MODEL.md`, including schema, auth model, storage buckets, RLS policy direction, admin workflow, costs, backup/export approach, and upgrade path.
+- A local TypeScript proof of concept for the `works` content shape exists in `src/content/supabaseWorkPreview.ts`.
 - No audio player or score reader has been implemented.
 - No real client content has been migrated.
 

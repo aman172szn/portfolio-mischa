@@ -30,6 +30,7 @@ portfolio-mischa/
 │   ├── FOLLOWUPS.md
 │   ├── PROJECT_DESIGN.md
 │   ├── REPO_STATE.md
+│   ├── SUPABASE_CONTENT_MODEL.md
 │   ├── TICKETS.md
 │   └── VERIFICATION.md
 ├── src/

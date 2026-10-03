@@ -1,20 +1,34 @@
 import { useState } from 'react';
-import { Link, NavLink, Outlet } from 'react-router-dom';
+import { Link, Navigate, NavLink, Outlet, useLocation, useParams } from 'react-router-dom';
 
+import { AudioPlayerProvider } from '../audio/AudioPlayerContext';
+import { PersistentAudioPlayer } from '../audio/PersistentAudioPlayer';
+import { getLocale, isLocale, locales, localizePath, siteCopy, switchLocalePath } from '../i18n';
 import { primaryNavigation } from '../navigation';
+import { ScoreReader } from '../score/ScoreReader';
+import { ScoreReaderProvider } from '../score/ScoreReaderContext';
 import './site-layout.css';
 
 export function SiteLayout() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { locale: localeParam } = useParams();
+  const location = useLocation();
+  const locale = getLocale(localeParam);
+
+  if (!isLocale(localeParam)) {
+    return <Navigate to="/de" replace />;
+  }
 
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
 
   return (
-    <div className="site-shell">
+    <AudioPlayerProvider>
+      <ScoreReaderProvider>
+        <div className="site-shell">
       <header className="site-header">
-        <Link className="site-header__brand" to="/" onClick={closeMenu}>
+        <Link className="site-header__brand" to={localizePath('/', locale)} onClick={closeMenu}>
           <span className="site-header__brand-name">Mischa Tangian</span>
         </Link>
 
@@ -24,9 +38,9 @@ export function SiteLayout() {
               end={item.path === '/'}
               className="site-header__nav-link"
               key={item.path}
-              to={item.path}
+              to={localizePath(item.path, locale)}
             >
-              {item.label}
+              {item.label[locale]}
             </NavLink>
           ))}
         </nav>
@@ -34,24 +48,24 @@ export function SiteLayout() {
         <div className="site-header__actions">
           <div
             className="site-header__language"
-            aria-label="Language selector placeholder"
+            aria-label="Language selector"
           >
-            <button className="site-header__language-option" type="button">
-              DE
-            </button>
-            <button
-              className="site-header__language-option"
-              type="button"
-              disabled
-            >
-              EN
-            </button>
+            {locales.map((option) => (
+              <Link
+                aria-current={option === locale ? 'true' : undefined}
+                className="site-header__language-option"
+                key={option}
+                to={switchLocalePath(location.pathname, option)}
+              >
+                {option.toUpperCase()}
+              </Link>
+            ))}
           </div>
 
           <button
             aria-controls="mobile-navigation"
             aria-expanded={isMenuOpen}
-            aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-label={isMenuOpen ? siteCopy.menu.close[locale] : siteCopy.menu.open[locale]}
             className="site-header__menu-button"
             type="button"
             onClick={() => setIsMenuOpen((current) => !current)}
@@ -74,10 +88,10 @@ export function SiteLayout() {
             end={item.path === '/'}
             className="mobile-nav__link"
             key={item.path}
-            to={item.path}
+            to={localizePath(item.path, locale)}
             onClick={closeMenu}
           >
-            {item.label}
+            {item.label[locale]}
           </NavLink>
         ))}
       </nav>
@@ -88,14 +102,18 @@ export function SiteLayout() {
 
       <footer className="site-footer">
         <div className="site-footer__inner">
-          <Link className="site-footer__brand" to="/">
+          <Link className="site-footer__brand" to={localizePath('/', locale)}>
             Mischa Tangian
           </Link>
           <p className="site-footer__note">
-            Portfolio and digital archive in progress.
+            {siteCopy.footerNote[locale]}
           </p>
         </div>
       </footer>
+      <PersistentAudioPlayer locale={locale} />
+      <ScoreReader locale={locale} />
     </div>
+      </ScoreReaderProvider>
+    </AudioPlayerProvider>
   );
 }

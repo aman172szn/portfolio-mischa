@@ -1,0 +1,165 @@
+import { Link, useParams } from 'react-router-dom';
+
+import { useAudioPlayer } from '../audio/useAudioPlayer';
+import { getLocale, localizePath } from '../i18n';
+import { useScoreReader } from '../score/useScoreReader';
+import { getPublishedWorkBySlug } from '../../content/works';
+
+const copy = {
+  back: {
+    de: 'Zurueck zu Werke',
+    en: 'Back to works',
+  },
+  notFoundTitle: {
+    de: 'Werk nicht gefunden',
+    en: 'Work not found',
+  },
+  notFoundBody: {
+    de: 'Dieser Eintrag ist nicht verfuegbar oder noch nicht veroeffentlicht.',
+    en: 'This entry is unavailable or has not been published yet.',
+  },
+  year: {
+    de: 'Jahr',
+    en: 'Year',
+  },
+  instrumentation: {
+    de: 'Besetzung',
+    en: 'Instrumentation',
+  },
+  duration: {
+    de: 'Dauer',
+    en: 'Duration',
+  },
+  audio: {
+    de: 'Audio',
+    en: 'Audio',
+  },
+  score: {
+    de: 'Partitur',
+    en: 'Score',
+  },
+  performances: {
+    de: 'Auffuehrungen',
+    en: 'Performances',
+  },
+  listenPlaceholder: {
+    de: 'Audioplayer-Platzhalter. Die Wiedergabe wird im Audio-Player-Ticket umgesetzt.',
+    en: 'Audio player placeholder. Playback will be implemented in the audio-player ticket.',
+  },
+  scorePlaceholder: {
+    de: 'Partiturleser-Platzhalter. Ansicht und Download werden im Score-Reader-Ticket umgesetzt.',
+    en: 'Score reader placeholder. Viewing and download will be implemented in the score-reader ticket.',
+  },
+  performancesPlaceholder: {
+    de: 'Auffuehrungen werden ergaenzt, sobald verifizierte Termine und Werkbezuege vorliegen.',
+    en: 'Performances will be added after verified dates and work references are supplied.',
+  },
+  unavailable: {
+    de: 'folgt',
+    en: 'TBC',
+  },
+} as const;
+
+export function WorkDetailRoute() {
+  const { locale: localeParam, slug } = useParams();
+  const locale = getLocale(localeParam);
+  const work = getPublishedWorkBySlug(slug, locale);
+  const { playTrack } = useAudioPlayer();
+  const { openScore } = useScoreReader();
+
+  if (!work) {
+    return (
+      <div className="page-frame work-detail">
+        <Link className="text-link" to={localizePath('/works', locale)}>
+          {copy.back[locale]}
+        </Link>
+        <section className="route-placeholder" aria-labelledby="page-title">
+          <h1 className="route-placeholder__title" id="page-title">
+            {copy.notFoundTitle[locale]}
+          </h1>
+          <p className="route-placeholder__copy">{copy.notFoundBody[locale]}</p>
+        </section>
+      </div>
+    );
+  }
+
+  return (
+    <div className="page-frame work-detail">
+      <Link className="text-link" to={localizePath('/works', locale)}>
+        {copy.back[locale]}
+      </Link>
+
+      <article className="work-detail__article">
+        <header className="work-detail__header">
+          <div>
+            <h1>{work.title}</h1>
+            <p>{work.description ?? copy.unavailable[locale]}</p>
+          </div>
+          <dl className="work-detail__meta">
+            <div>
+              <dt>{copy.year[locale]}</dt>
+              <dd>{work.year ?? copy.unavailable[locale]}</dd>
+            </div>
+            <div>
+              <dt>{copy.instrumentation[locale]}</dt>
+              <dd>{work.instrumentation ?? copy.unavailable[locale]}</dd>
+            </div>
+            <div>
+              <dt>{copy.duration[locale]}</dt>
+              <dd>{work.duration ?? copy.unavailable[locale]}</dd>
+            </div>
+          </dl>
+        </header>
+
+        <div className="work-detail__image" aria-hidden="true" />
+
+        <section className="work-detail__section" aria-labelledby="work-audio-title">
+          <h2 id="work-audio-title">{copy.audio[locale]}</h2>
+          <p>{copy.listenPlaceholder[locale]}</p>
+          {work.audioPath ? (
+            <button
+              className="work-detail__audio-button"
+              type="button"
+              onClick={() => {
+                void playTrack({
+                  id: work.id,
+                  metadata: work.instrumentation ?? copy.unavailable[locale],
+                  source: null,
+                  title: work.title,
+                });
+              }}
+            >
+              {copy.audio[locale]}
+            </button>
+          ) : null}
+        </section>
+
+        <section className="work-detail__section" aria-labelledby="work-score-title">
+          <h2 id="work-score-title">{copy.score[locale]}</h2>
+          <p>{copy.scorePlaceholder[locale]}</p>
+          {work.scorePdfPath ? (
+            <button
+              className="work-detail__score-button"
+              type="button"
+              onClick={() => {
+                openScore({
+                  id: work.id,
+                  metadata: work.instrumentation ?? copy.unavailable[locale],
+                  source: null,
+                  title: work.title,
+                });
+              }}
+            >
+              {copy.score[locale]}
+            </button>
+          ) : null}
+        </section>
+
+        <section className="work-detail__section" aria-labelledby="work-performances-title">
+          <h2 id="work-performances-title">{copy.performances[locale]}</h2>
+          <p>{copy.performancesPlaceholder[locale]}</p>
+        </section>
+      </article>
+    </div>
+  );
+}

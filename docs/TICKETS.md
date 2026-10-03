@@ -74,7 +74,7 @@ Open the local URL in a desktop browser and a mobile-sized viewport.
 
 ## T0002 — Global Design Tokens
 
-Status: TODO
+Status: DONE
 
 ### Goal
 
@@ -122,7 +122,7 @@ Check headings, body, metadata, borders and focus states at desktop and mobile w
 
 ## T0003 — Site Shell + Header
 
-Status: TODO
+Status: DONE
 
 ### Goal
 
@@ -158,7 +158,7 @@ T0002.
 
 ## T0004 — Homepage Editorial Layout
 
-Status: TODO
+Status: DONE
 
 ### Goal
 
@@ -196,7 +196,7 @@ Sections:
 
 ## T0005 — Supabase Content Model Spike
 
-Status: TODO
+Status: DONE
 
 ### Goal
 
@@ -247,7 +247,7 @@ Evaluate:
 
 ## T0006 — Internationalization
 
-Status: TODO
+Status: DONE
 
 ### Goal
 
@@ -280,7 +280,7 @@ T0003, T0005.
 
 ## T0007 — Works Catalogue
 
-Status: TODO
+Status: DONE
 
 ### Goal
 
@@ -317,7 +317,7 @@ Work detail supports:
 
 ## T0008 — Audio Player
 
-Status: TODO
+Status: DONE
 
 ### Goal
 
@@ -359,7 +359,7 @@ T0007.
 
 ## T0009 — Score Reader
 
-Status: TODO
+Status: DONE
 
 ### Goal
 

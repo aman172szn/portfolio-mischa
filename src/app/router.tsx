@@ -1,12 +1,18 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { Navigate, createBrowserRouter } from 'react-router-dom';
 
 import { SiteLayout } from './layout/SiteLayout';
+import { WorkDetailRoute } from './routes/WorkDetailRoute';
+import { WorksIndexRoute } from './routes/WorksIndexRoute';
 import { RootRoute } from './routes/RootRoute';
 import { RoutePlaceholder } from './routes/RoutePlaceholder';
 
 export const router = createBrowserRouter([
   {
     path: '/',
+    element: <Navigate to="/de" replace />,
+  },
+  {
+    path: '/:locale',
     element: <SiteLayout />,
     children: [
       {
@@ -15,24 +21,32 @@ export const router = createBrowserRouter([
       },
       {
         path: 'works',
-        element: <RoutePlaceholder label="Works" />,
+        element: <WorksIndexRoute />,
+      },
+      {
+        path: 'works/:slug',
+        element: <WorkDetailRoute />,
       },
       {
         path: 'dates',
-        element: <RoutePlaceholder label="Dates" />,
+        element: <RoutePlaceholder label={{ de: 'Termine', en: 'Dates' }} />,
       },
       {
         path: 'news',
-        element: <RoutePlaceholder label="News" />,
+        element: <RoutePlaceholder label={{ de: 'News', en: 'News' }} />,
       },
       {
         path: 'about',
-        element: <RoutePlaceholder label="About" />,
+        element: <RoutePlaceholder label={{ de: 'Ueber', en: 'About' }} />,
       },
       {
         path: 'contact',
-        element: <RoutePlaceholder label="Contact" />,
+        element: <RoutePlaceholder label={{ de: 'Kontakt', en: 'Contact' }} />,
       },
     ],
+  },
+  {
+    path: '*',
+    element: <Navigate to="/de" replace />,
   },
 ]);
