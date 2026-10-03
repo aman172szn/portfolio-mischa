@@ -4,11 +4,26 @@ import {
   type SupabaseWorkRow,
   type WorkPreview,
 } from './supabaseWorkPreview';
+import type { Database } from '../lib/database.types';
+import { getPublicMediaUrl, isSupabaseConfigured, supabase } from '../lib/supabase';
+
+type SupabaseWorkTableRow = Database['public']['Tables']['works']['Row'];
+type SupabaseWorkMediaTableRow = Database['public']['Tables']['work_media']['Row'];
+
+export type WorkMediaItem = {
+  id: string;
+  type: 'audio' | 'score' | 'photo';
+  title: string;
+  duration: string | null;
+  source: string | null;
+  sortOrder: number;
+};
 
 export type WorkDetail = WorkPreview & {
   category: string | null;
   audioPath: string | null;
   scorePdfPath: string | null;
+  media: WorkMediaItem[];
 };
 
 const placeholderDescription = {
@@ -82,14 +97,120 @@ export const workRows = [
   },
 ] satisfies SupabaseWorkRow[];
 
-export function getPublishedWorkPreviews(locale: Locale): WorkPreview[] {
+function mapWorkWithPublicMedia(row: SupabaseWorkRow, locale: Locale): WorkPreview {
+  const preview = mapWorkRowToPreview(row, locale);
+
+  return {
+    ...preview,
+    audioPath: getPublicMediaUrl('audio', preview.audioPath),
+    coverImagePath: getPublicMediaUrl('photos', preview.coverImagePath),
+    scorePdfPath: getPublicMediaUrl('scores', preview.scorePdfPath),
+  };
+}
+
+function mapFallbackWorkPreview(row: SupabaseWorkRow, locale: Locale): WorkPreview {
+  const preview = mapWorkRowToPreview(row, locale);
+
+  return {
+    ...preview,
+    audioPath: null,
+    coverImagePath: null,
+    scorePdfPath: null,
+  };
+}
+
+function mapFallbackWorkDetail(row: SupabaseWorkRow, locale: Locale): WorkDetail {
+  const preview = mapFallbackWorkPreview(row, locale);
+  const media: WorkMediaItem[] = [];
+
+  if (row.audio_path) {
+    media.push({
+      id: `${row.id}-audio`,
+      type: 'audio',
+      title: preview.title,
+      duration: row.duration,
+      source: null,
+      sortOrder: 10,
+    });
+  }
+
+  if (row.score_pdf_path) {
+    media.push({
+      id: `${row.id}-score`,
+      type: 'score',
+      title: preview.title,
+      duration: null,
+      source: null,
+      sortOrder: 20,
+    });
+  }
+
+  return {
+    ...preview,
+    category: row.category,
+    audioPath: null,
+    scorePdfPath: null,
+    media,
+  };
+}
+
+function mapWorkMediaWithPublicUrl(row: SupabaseWorkMediaTableRow, locale: Locale): WorkMediaItem {
+  const title = locale === 'en' && row.title_en ? row.title_en : row.title_de;
+
+  return {
+    id: row.id,
+    type: row.media_type,
+    title: title ?? row.storage_path,
+    duration: row.duration,
+    source: getPublicMediaUrl(row.storage_bucket, row.storage_path),
+    sortOrder: row.sort_order,
+  };
+}
+
+function mapWorkDetailWithPublicMedia(
+  row: SupabaseWorkRow,
+  mediaRows: SupabaseWorkMediaTableRow[],
+  locale: Locale,
+): WorkDetail {
+  const preview = mapWorkWithPublicMedia(row, locale);
+
+  return {
+    ...preview,
+    category: row.category,
+    audioPath: preview.audioPath,
+    scorePdfPath: preview.scorePdfPath,
+    media: mediaRows
+      .map((mediaRow) => mapWorkMediaWithPublicUrl(mediaRow, locale))
+      .sort((first, second) => first.sortOrder - second.sortOrder),
+  };
+}
+
+export function getFallbackPublishedWorkPreviews(locale: Locale): WorkPreview[] {
   return workRows
     .filter((work) => work.status === 'published')
     .sort((first, second) => first.sort_order - second.sort_order)
-    .map((work) => mapWorkRowToPreview(work, locale));
+    .map((work) => mapFallbackWorkPreview(work, locale));
 }
 
-export function getPublishedWorkBySlug(
+export async function getPublishedWorkPreviews(locale: Locale): Promise<WorkPreview[]> {
+  if (!isSupabaseConfigured || !supabase) {
+    return getFallbackPublishedWorkPreviews(locale);
+  }
+
+  const { data, error } = await supabase
+    .from('works')
+    .select('*')
+    .eq('status', 'published')
+    .order('sort_order', { ascending: true });
+
+  if (error || !data || data.length === 0) {
+    return getFallbackPublishedWorkPreviews(locale);
+  }
+
+  return (data as SupabaseWorkTableRow[]).map((work) => mapWorkWithPublicMedia(work, locale));
+}
+
+export function getFallbackPublishedWorkBySlug(
   slug: string | undefined,
   locale: Locale,
 ): WorkDetail | null {
@@ -99,10 +220,42 @@ export function getPublishedWorkBySlug(
     return null;
   }
 
-  return {
-    ...mapWorkRowToPreview(row, locale),
-    category: row.category,
-    audioPath: row.audio_path,
-    scorePdfPath: row.score_pdf_path,
-  };
+  return mapFallbackWorkDetail(row, locale);
+}
+
+export async function getPublishedWorkBySlug(
+  slug: string | undefined,
+  locale: Locale,
+): Promise<WorkDetail | null> {
+  if (!slug) {
+    return null;
+  }
+
+  if (!isSupabaseConfigured || !supabase) {
+    return getFallbackPublishedWorkBySlug(slug, locale);
+  }
+
+  const { data, error } = await supabase
+    .from('works')
+    .select('*')
+    .eq('status', 'published')
+    .eq('slug', slug)
+    .maybeSingle();
+
+  if (error || !data) {
+    return getFallbackPublishedWorkBySlug(slug, locale);
+  }
+
+  const { data: mediaData, error: mediaError } = await supabase
+    .from('work_media')
+    .select('*')
+    .eq('work_id', data.id)
+    .eq('status', 'published')
+    .order('sort_order', { ascending: true });
+
+  return mapWorkDetailWithPublicMedia(
+    data as SupabaseWorkTableRow,
+    mediaError || !mediaData ? [] : (mediaData as SupabaseWorkMediaTableRow[]),
+    locale,
+  );
 }

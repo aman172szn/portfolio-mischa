@@ -51,6 +51,19 @@ portfolio-mischa/
 10. Update `docs/REPO_STATE.md`.
 11. Move to the next ticket.
 
+## Supabase configuration
+
+Copy `.env.example` to `.env.local` and fill in:
+
+```text
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
+```
+
+Without those values, the app uses local placeholder content for development.
+
+Backend schema, RLS policies, Storage buckets, and setup steps are documented in `docs/SUPABASE_SETUP.md`.
+
 ## First task
 
 Start with:

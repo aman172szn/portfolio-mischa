@@ -8,7 +8,7 @@ Mischa Tangian Portfolio
 
 ## Current Phase
 
-Score reader complete / Dates archive next
+Supabase backend connected / Content inventory and import preparation
 
 The project has been restarted from a clean foundation.
 
@@ -22,7 +22,7 @@ Build a clean, maintainable, high-performance bilingual portfolio and digital ar
 
 Current focus:
 
-`T0010 - Dates / Concert Archive`
+`T0009B - Supabase Backend Provisioning` and initial content import preparation
 
 ---
 
@@ -37,6 +37,7 @@ Current focus:
 - `T0007 - Works Catalogue`
 - `T0008 - Audio Player`
 - `T0009 - Score Reader`
+- `T0009A - Supabase Client Integration`
 
 ## Current Implementation Status
 
@@ -56,11 +57,27 @@ Current focus:
 - A site-native score reader overlay is mounted in the site shell with open/close, page controls, fullscreen action, download action, Escape close, and mobile full-height layout.
 - Works with score PDFs expose Score controls that open the selected work in the reader.
 - Supabase has been selected for the backend: Postgres for structured content, Auth for admin access, and Storage for photographs, audio files, and score PDFs.
+- The Supabase JavaScript client is installed and wrapped in `src/lib/supabase.ts`.
+- Public Supabase environment variables are documented in `.env.example`.
+- Works catalogue/detail reads use Supabase `works` rows when `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are configured.
+- Local placeholder works remain as a fallback when Supabase is not configured or a public read fails.
+- Supabase Storage public URLs are mapped for audio, photos, and scores.
+- Supabase migrations are committed under `supabase/migrations`, covering public content tables, admin allowlist, RLS policies, Storage buckets, and Storage policies.
+- Supabase setup instructions are documented in `docs/SUPABASE_SETUP.md`.
+- The hosted Supabase project exists and the first three migrations were applied manually through the Supabase SQL Editor.
+- `.env.local` points to the hosted Supabase project and public reads have been verified with the anon key.
+- An ordered `work_media` migration has been added so works can have multiple audio tracks, scores, and later photos.
+- The supplied `all_works` media folder has been inventoried in `docs/CONTENT_INVENTORY.md`.
+- `supabase/content_import.sql` drafts the initial real content metadata for `the order of time`, `WATER`, and a draft-only Samurai scenes entry.
 - A structured admin dashboard has been selected as the client content-management direction.
 - The Supabase content model spike is documented in `docs/SUPABASE_CONTENT_MODEL.md`, including schema, auth model, storage buckets, RLS policy direction, admin workflow, costs, backup/export approach, and upgrade path.
 - A local TypeScript proof of concept for the `works` content shape exists in `src/content/supabaseWorkPreview.ts`.
-- No audio player or score reader has been implemented.
-- No real client content has been migrated.
+- Real client media files have not been uploaded to Supabase Storage yet.
+- Real content metadata has been prepared but not yet applied to the hosted database.
+
+## Current Blocker
+
+Large WAV uploads may exceed Supabase Free project's 50 MB file size limit. The first admin user is not bootstrapped yet.
 
 ---
 

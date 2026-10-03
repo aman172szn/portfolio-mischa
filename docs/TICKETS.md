@@ -391,6 +391,91 @@ T0007.
 
 ---
 
+## T0009A — Supabase Client Integration
+
+Status: DONE
+
+### Goal
+
+Connect the public site to Supabase for published content reads before building more placeholder-only sections.
+
+### Dependencies
+
+T0005, T0007, T0008, T0009.
+
+### Requirements
+
+- install the Supabase JavaScript client
+- define public Vite environment variables
+- create a shared Supabase browser client
+- keep secrets out of source control
+- read published works from Supabase when configured
+- keep local placeholder fallback when Supabase environment variables are missing
+- map public Storage paths for audio and score files
+- preserve the current Works catalogue, audio player, and score reader behavior
+
+### Non-goals
+
+- admin dashboard
+- authentication UI
+- database migrations
+- content migration
+- Dates/News/About Supabase reads
+
+### Acceptance criteria
+
+- production build succeeds without Supabase credentials
+- `.env.example` documents required public variables
+- Works catalogue can use Supabase `works` rows when credentials are configured
+- local fallback remains available for development without credentials
+
+---
+
+## T0009B — Supabase Backend Provisioning
+
+Status: BLOCKED
+
+### Goal
+
+Create the hosted Supabase backend and apply the production-ready schema, policies, and storage setup.
+
+### Dependencies
+
+T0005, T0009A.
+
+### Requirements
+
+- create or select the hosted Supabase project
+- apply committed database migrations
+- create public media buckets
+- enable RLS policies
+- configure frontend environment variables
+- bootstrap the first admin user
+- verify public reads against the hosted project
+- support ordered media metadata for works with multiple audio tracks
+
+### Non-goals
+
+- building the admin dashboard UI
+- migrating final client content
+- storing service-role keys in source control
+
+### Acceptance criteria
+
+- hosted Supabase project exists
+- migrations are applied
+- `.env.local` points to the project
+- Works page reads from hosted Supabase
+- anonymous visitors can read only published content
+- admin allowlist is ready for future dashboard work
+- ordered work media metadata can be imported separately from binary file uploads
+
+### Blocker
+
+Requires Supabase account access, or a Supabase project reference plus credentials from the project owner. Local backend migrations and setup documentation are committed, but the hosted project cannot be created from this repository alone.
+
+---
+
 ## T0010 — Dates / Concert Archive
 
 Status: TODO

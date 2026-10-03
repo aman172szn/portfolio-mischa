@@ -1,9 +1,10 @@
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { useAudioPlayer } from '../audio/useAudioPlayer';
 import { getLocale, localizePath } from '../i18n';
 import { useScoreReader } from '../score/useScoreReader';
-import { getPublishedWorkBySlug } from '../../content/works';
+import { getPublishedWorkBySlug, type WorkDetail } from '../../content/works';
 
 const copy = {
   back: {
@@ -34,6 +35,10 @@ const copy = {
     de: 'Audio',
     en: 'Audio',
   },
+  playTrack: {
+    de: 'Abspielen',
+    en: 'Play',
+  },
   score: {
     de: 'Partitur',
     en: 'Score',
@@ -58,14 +63,51 @@ const copy = {
     de: 'folgt',
     en: 'TBC',
   },
+  loading: {
+    de: 'Werk wird geladen.',
+    en: 'Loading work.',
+  },
 } as const;
 
 export function WorkDetailRoute() {
   const { locale: localeParam, slug } = useParams();
   const locale = getLocale(localeParam);
-  const work = getPublishedWorkBySlug(slug, locale);
+  const [work, setWork] = useState<WorkDetail | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const { playTrack } = useAudioPlayer();
   const { openScore } = useScoreReader();
+  const audioTracks = work?.media.filter((item) => item.type === 'audio') ?? [];
+
+  useEffect(() => {
+    let isMounted = true;
+
+    setIsLoading(true);
+    void getPublishedWorkBySlug(slug, locale).then((nextWork) => {
+      if (isMounted) {
+        setWork(nextWork);
+        setIsLoading(false);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [locale, slug]);
+
+  if (isLoading) {
+    return (
+      <div className="page-frame work-detail">
+        <Link className="text-link" to={localizePath('/works', locale)}>
+          {copy.back[locale]}
+        </Link>
+        <section className="route-placeholder" aria-labelledby="page-title">
+          <h1 className="route-placeholder__title" id="page-title">
+            {copy.loading[locale]}
+          </h1>
+        </section>
+      </div>
+    );
+  }
 
   if (!work) {
     return (
@@ -115,29 +157,56 @@ export function WorkDetailRoute() {
 
         <section className="work-detail__section" aria-labelledby="work-audio-title">
           <h2 id="work-audio-title">{copy.audio[locale]}</h2>
-          <p>{copy.listenPlaceholder[locale]}</p>
-          {work.audioPath ? (
-            <button
-              className="work-detail__audio-button"
-              type="button"
-              onClick={() => {
-                void playTrack({
-                  id: work.id,
-                  metadata: work.instrumentation ?? copy.unavailable[locale],
-                  source: null,
-                  title: work.title,
-                });
-              }}
-            >
-              {copy.audio[locale]}
-            </button>
+          {audioTracks.length > 0 ? (
+            <div className="work-detail__track-list">
+              {audioTracks.map((track) => (
+                <button
+                  className="work-detail__track-button"
+                  key={track.id}
+                  type="button"
+                  onClick={() => {
+                    void playTrack({
+                      id: track.id,
+                      metadata: track.duration
+                        ? `${work.title} - ${track.duration}`
+                        : work.title,
+                      source: track.source,
+                      title: track.title,
+                    });
+                  }}
+                >
+                  <span>{track.title}</span>
+                  <span>
+                    {track.duration ?? copy.playTrack[locale]}
+                  </span>
+                </button>
+              ))}
+            </div>
+          ) : work.hasAudio ? (
+            <>
+              <p>{copy.listenPlaceholder[locale]}</p>
+              <button
+                className="work-detail__audio-button"
+                type="button"
+                onClick={() => {
+                  void playTrack({
+                    id: work.id,
+                    metadata: work.instrumentation ?? copy.unavailable[locale],
+                    source: work.audioPath,
+                    title: work.title,
+                  });
+                }}
+              >
+                {copy.audio[locale]}
+              </button>
+            </>
           ) : null}
         </section>
 
         <section className="work-detail__section" aria-labelledby="work-score-title">
           <h2 id="work-score-title">{copy.score[locale]}</h2>
           <p>{copy.scorePlaceholder[locale]}</p>
-          {work.scorePdfPath ? (
+          {work.hasScore ? (
             <button
               className="work-detail__score-button"
               type="button"
@@ -145,7 +214,7 @@ export function WorkDetailRoute() {
                 openScore({
                   id: work.id,
                   metadata: work.instrumentation ?? copy.unavailable[locale],
-                  source: null,
+                  source: work.scorePdfPath,
                   title: work.title,
                 });
               }}

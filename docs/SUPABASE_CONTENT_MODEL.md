@@ -49,6 +49,33 @@ create table public.works (
 
 German fields are the source content. English fields are generated automatically from German content and stored after generation so the public site can render quickly and consistently.
 
+### work_media
+
+Purpose: ordered media assets for a work, including multiple audio tracks, score PDFs, and later photos.
+
+The `works.audio_path` and `works.score_pdf_path` fields remain the primary media used by the current public catalogue/detail UI. `work_media` stores the complete ordered set for admin/media workflows and future richer public display.
+
+Recommended columns:
+
+```sql
+create table public.work_media (
+  id uuid primary key default gen_random_uuid(),
+  work_id uuid not null references public.works(id) on delete cascade,
+  media_type text not null check (media_type in ('audio', 'score', 'photo')),
+  title_de text,
+  title_en text,
+  storage_bucket text not null check (storage_bucket in ('audio', 'scores', 'photos')),
+  storage_path text not null,
+  duration text,
+  sort_order integer not null default 0,
+  is_primary boolean not null default false,
+  status text not null default 'draft' check (status in ('draft', 'published', 'archived')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (storage_bucket, storage_path)
+);
+```
+
 ### events
 
 Purpose: Dates page, homepage current dates, and performance archive.
@@ -288,7 +315,33 @@ Supabase docs state Pro projects can access 7 days of daily backups, Free projec
 
 ## Local Proof of Concept
 
-The file `src/content/supabaseWorkPreview.ts` models the `works` row shape and maps one example row to the public work-preview shape. It does not connect to Supabase or require credentials; it verifies the proposed field shape under strict TypeScript during `npm run build`.
+The file `src/content/supabaseWorkPreview.ts` models the `works` row shape and maps one example row to the public work-preview shape.
+
+The public app now has a Supabase client integration in `src/lib/supabase.ts`. Configure these Vite variables locally:
+
+```text
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
+```
+
+They are documented in `.env.example`; real `.env` files are ignored by git.
+
+`src/content/works.ts` reads published rows from the Supabase `works` table when those variables are present. When they are absent, or when a public read fails, it falls back to clearly labelled local placeholder rows so development and builds still work without credentials.
+
+Audio, photo, and score paths are mapped to public Supabase Storage URLs through the `audio`, `photos`, and `scores` buckets.
+
+## Backend Files
+
+The committed backend setup lives in:
+
+```text
+supabase/config.toml
+supabase/migrations/
+supabase/seed.sql
+docs/SUPABASE_SETUP.md
+```
+
+The hosted project still needs to be created or linked by someone with Supabase account access.
 
 ## Open Implementation Decisions
 

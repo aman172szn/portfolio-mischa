@@ -1,0 +1,23 @@
+import { createClient } from '@supabase/supabase-js';
+import type { Database } from './database.types';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
+
+export const supabase = isSupabaseConfigured
+  ? createClient<Database>(supabaseUrl as string, supabaseAnonKey as string)
+  : null;
+
+export function getPublicMediaUrl(bucket: 'audio' | 'photos' | 'scores', path: string | null) {
+  if (!supabase || !path) {
+    return null;
+  }
+
+  const objectPath = path.startsWith(`${bucket}/`)
+    ? path.slice(bucket.length + 1)
+    : path;
+
+  return supabase.storage.from(bucket).getPublicUrl(objectPath).data.publicUrl;
+}

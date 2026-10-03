@@ -492,6 +492,12 @@
   color: var(--color-text-subtle);
 }
 
+.works-list__loading {
+  padding-block: var(--space-lg);
+  border-bottom: var(--border-width-hairline) solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
 .work-detail {
   display: grid;
   gap: var(--space-lg);
@@ -570,6 +576,44 @@
 .work-detail__score-button {
   width: fit-content;
   color: var(--color-text);
+}
+
+.work-detail__track-list {
+  display: grid;
+  width: min(100%, 42rem);
+  border-top: var(--border-width-hairline) solid var(--color-border);
+}
+
+.work-detail__track-button {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: 3.5rem;
+  padding: var(--space-sm) 0;
+  border: 0;
+  border-bottom: var(--border-width-hairline) solid var(--color-border);
+  color: var(--color-text);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.work-detail__track-button span:first-child {
+  overflow-wrap: anywhere;
+  font-weight: var(--font-weight-semibold);
+}
+
+.work-detail__track-button span:last-child {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-meta);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--line-height-meta);
+}
+
+.work-detail__track-button:hover span:first-child {
+  color: var(--color-accent);
 }
 
 .score-reader {

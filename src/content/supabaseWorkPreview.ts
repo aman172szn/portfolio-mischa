@@ -33,6 +33,7 @@ export type WorkPreview = {
   description: string | null;
   duration: string | null;
   coverImagePath: string | null;
+  audioPath: string | null;
   scorePdfPath: string | null;
   hasAudio: boolean;
   hasScore: boolean;
@@ -60,6 +61,7 @@ export function mapWorkRowToPreview(
     description,
     duration: row.duration,
     coverImagePath: row.cover_image_path,
+    audioPath: row.audio_path,
     scorePdfPath: row.score_pdf_path,
     hasAudio: Boolean(row.audio_path),
     hasScore: Boolean(row.score_pdf_path),

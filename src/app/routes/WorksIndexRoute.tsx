@@ -1,9 +1,11 @@
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { useAudioPlayer } from '../audio/useAudioPlayer';
 import { getLocale, localizePath } from '../i18n';
 import { useScoreReader } from '../score/useScoreReader';
 import { getPublishedWorkPreviews } from '../../content/works';
+import type { WorkPreview } from '../../content/supabaseWorkPreview';
 
 const copy = {
   pageTitle: {
@@ -50,14 +52,35 @@ const copy = {
     de: 'folgt',
     en: 'TBC',
   },
+  loading: {
+    de: 'Werke werden geladen.',
+    en: 'Loading works.',
+  },
 } as const;
 
 export function WorksIndexRoute() {
   const { locale: localeParam } = useParams();
   const locale = getLocale(localeParam);
-  const works = getPublishedWorkPreviews(locale);
+  const [works, setWorks] = useState<WorkPreview[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { playTrack } = useAudioPlayer();
   const { openScore } = useScoreReader();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    setIsLoading(true);
+    void getPublishedWorkPreviews(locale).then((nextWorks) => {
+      if (isMounted) {
+        setWorks(nextWorks);
+        setIsLoading(false);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [locale]);
 
   return (
     <div className="page-frame works-page">
@@ -73,6 +96,8 @@ export function WorksIndexRoute() {
           <span>{copy.tableInstrumentation[locale]}</span>
           <span>{copy.tableActions[locale]}</span>
         </div>
+
+        {isLoading ? <p className="works-list__loading">{copy.loading[locale]}</p> : null}
 
         {works.map((work) => (
           <article className="works-list__row" key={work.id}>
@@ -100,7 +125,7 @@ export function WorksIndexRoute() {
                     void playTrack({
                       id: work.id,
                       metadata: work.instrumentation ?? copy.unavailable[locale],
-                      source: null,
+                      source: work.audioPath,
                       title: work.title,
                     });
                   }}
@@ -118,7 +143,7 @@ export function WorksIndexRoute() {
                     openScore({
                       id: work.id,
                       metadata: work.instrumentation ?? copy.unavailable[locale],
-                      source: null,
+                      source: work.scorePdfPath,
                       title: work.title,
                     });
                   }}
