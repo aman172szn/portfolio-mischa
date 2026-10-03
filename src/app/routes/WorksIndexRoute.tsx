@@ -13,8 +13,8 @@ const copy = {
     en: 'Works',
   },
   intro: {
-    de: 'Ein redaktionelles Werkverzeichnis. Die Eintraege sind Platzhalter, bis die verifizierte Werkliste, Besetzungen und Beschreibungen vorliegen.',
-    en: 'An editorial works catalogue. Entries are placeholders until the verified work list, instrumentation and descriptions are supplied.',
+    de: 'Ausgewaehlte Werke mit Aufnahmen, Besetzungen und Partiturzugang.',
+    en: 'Selected works with recordings, instrumentation, and score access.',
   },
   tableYear: {
     de: 'Jahr',
@@ -33,8 +33,8 @@ const copy = {
     en: 'Actions',
   },
   yearTbc: {
-    de: 'folgt',
-    en: 'TBC',
+    de: 'Ohne Jahr',
+    en: 'No year',
   },
   details: {
     de: 'Details',
@@ -49,8 +49,12 @@ const copy = {
     en: 'Score',
   },
   unavailable: {
-    de: 'folgt',
-    en: 'TBC',
+    de: 'Nicht angegeben',
+    en: 'Not listed',
+  },
+  featured: {
+    de: 'Empfohlen',
+    en: 'Featured',
   },
   loading: {
     de: 'Werke werden geladen.',
@@ -108,7 +112,7 @@ export function WorksIndexRoute() {
                   {work.title}
                 </Link>
               </h2>
-              {work.featured ? <span className="works-list__badge">Featured</span> : null}
+              {work.featured ? <span className="works-list__badge">{copy.featured[locale]}</span> : null}
             </div>
             <p className="works-list__instrumentation">
               {work.instrumentation ?? copy.unavailable[locale]}

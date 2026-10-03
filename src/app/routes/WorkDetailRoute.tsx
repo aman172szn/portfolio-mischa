@@ -8,7 +8,7 @@ import { getPublishedWorkBySlug, type WorkDetail } from '../../content/works';
 
 const copy = {
   back: {
-    de: 'Zurueck zu Werke',
+    de: 'Zurueck zu den Werken',
     en: 'Back to works',
   },
   notFoundTitle: {
@@ -48,20 +48,20 @@ const copy = {
     en: 'Performances',
   },
   listenPlaceholder: {
-    de: 'Audioplayer-Platzhalter. Die Wiedergabe wird im Audio-Player-Ticket umgesetzt.',
-    en: 'Audio player placeholder. Playback will be implemented in the audio-player ticket.',
+    de: 'Aufnahme abspielen.',
+    en: 'Play the available recording.',
   },
   scorePlaceholder: {
-    de: 'Partiturleser-Platzhalter. Ansicht und Download werden im Score-Reader-Ticket umgesetzt.',
-    en: 'Score reader placeholder. Viewing and download will be implemented in the score-reader ticket.',
+    de: 'Partitur im Browser oeffnen oder herunterladen.',
+    en: 'Open the score in the browser or download it.',
   },
   performancesPlaceholder: {
-    de: 'Auffuehrungen werden ergaenzt, sobald verifizierte Termine und Werkbezuege vorliegen.',
-    en: 'Performances will be added after verified dates and work references are supplied.',
+    de: 'Derzeit sind keine Auffuehrungsdetails gelistet.',
+    en: 'No performance details are listed yet.',
   },
   unavailable: {
-    de: 'folgt',
-    en: 'TBC',
+    de: 'Nicht angegeben',
+    en: 'Not listed',
   },
   loading: {
     de: 'Werk wird geladen.',

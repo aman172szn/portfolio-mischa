@@ -30,12 +30,12 @@ The media source folder is intentionally ignored by git. Keep original audio, sc
 - Supabase draft paths:
   - Score: `the-order-of-time/the-order-of-time-full-score-2024.pdf`
   - Audio:
-    - `the-order-of-time/order-of-time-movement-1-live.wav`
-    - `the-order-of-time/order-of-time-movement-2-live.wav`
-    - `the-order-of-time/order-of-time-movement-3-live.wav`
-    - `the-order-of-time/order-of-time-movement-5-live.wav`
+    - `the-order-of-time/order-of-time-movement-1-live.mp3`
+    - `the-order-of-time/order-of-time-movement-2.mp3`
+    - `the-order-of-time/order-of-time-movement-3.mp3`
+    - `the-order-of-time/order-of-time-movement-5.mp3`
 - Storage warning:
-  - All four WAV files are larger than 50 MB. Supabase Free projects may reject these unless the project is upgraded or the files are compressed before upload.
+  - The original WAV files are larger than 50 MB. MP3 versions were uploaded for Supabase Free compatibility.
 
 ### WATER
 
@@ -87,4 +87,3 @@ Create initial Supabase `works` rows for:
 3. `samurai-scenes` as a draft placeholder only
 
 Do not publish `samurai-scenes` until the title and metadata are confirmed.
-
