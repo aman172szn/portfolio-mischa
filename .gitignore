@@ -1,4 +1,5 @@
 node_modules/
+all_works/
 dist/
 build/
 .vite/
