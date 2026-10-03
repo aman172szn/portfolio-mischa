@@ -89,7 +89,9 @@ Admin uploads/updates/deletes are restricted by Storage RLS policies.
 
 ## 6. Bootstrap first admin
 
-After the first admin user signs in through Supabase Auth, add them to `public.admin_users`.
+In Supabase, open **Authentication > Users > Add user > Create new user**.
+Create the client's email/password account and mark the email confirmed. There is no public registration form.
+Copy that Auth user's UUID, then add them to `public.admin_users` once:
 
 Use the Supabase SQL editor or another trusted admin-only channel:
 
@@ -102,7 +104,26 @@ set role = excluded.role;
 
 Do not expose service-role keys in the frontend.
 
-## 7. Verify public reads
+Open `http://127.0.0.1:5173/admin` and sign in with that email and password.
+The dashboard checks the authenticated user and `is_admin()` before reading works.
+It lists published, draft, and archived works and provides the everyday editing workflow.
+SQL is needed only for this initial allowlist setup.
+
+## 7. Admin works workflow
+
+After signing in at `/admin`, use the works dashboard for normal content maintenance:
+
+- create and edit work metadata in German and English fields
+- switch works between draft, published, and archived
+- upload audio files to `audio`, score PDFs to `scores`, and photographs to `photos`
+- edit media titles, status, duration, and sort order
+- set the primary audio, score, or photo for the public work page
+- remove uploaded media when needed
+
+The dashboard uses the authenticated browser session and the existing RLS policies.
+Do not paste service-role keys into the app or browser.
+
+## 8. Verify public reads
 
 After migrations are applied and `.env.local` is configured:
 
@@ -123,7 +144,7 @@ Expected behavior:
 - audio and score paths resolve through public Storage URLs
 - if Supabase credentials are removed, local fallback placeholders still render
 
-## 8. Current backend status
+## 9. Current backend status
 
 Implemented:
 
@@ -134,12 +155,23 @@ Implemented:
 - Storage RLS policies
 - typed Supabase browser client
 - Works catalogue/detail reads from Supabase with local fallback
+- admin works editing and media upload dashboard
 
 Not implemented yet:
 
-- admin dashboard UI
-- Auth login UI
-- content editing forms
 - automatic translation function
 - Dates and News Supabase read services
-- Storage upload of inventoried production media
+- remaining inventoried production media uploads beyond WATER and The Order of Time
+
+Implemented in T0009C: admin sign-in/sign-out, session restoration, protected works list,
+German/English controls, and recovery states. WATER and The Order of Time uploads
+and playback/score checks have been completed by the project owner.
+
+Browser regression checks can be run with `node scripts/verify-admin.cjs` when Playwright
+is available. An optional first argument supplies a package resolution directory for a
+bundled Playwright installation. Start the dev server on port 5173 first.
+The test uses mocked Auth/data responses and makes no changes to Supabase.
+
+Implemented in T0009D: works create/edit forms, draft/publish/archive controls,
+direct Storage uploads for audio/scores/photos, ordered media metadata, primary media
+selection, and recoverable save/upload feedback.

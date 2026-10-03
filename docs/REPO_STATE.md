@@ -8,7 +8,7 @@ Mischa Tangian Portfolio
 
 ## Current Phase
 
-Supabase backend connected / Content inventory and import preparation
+Supabase backend connected / Admin works editing complete
 
 The project has been restarted from a clean foundation.
 
@@ -22,7 +22,7 @@ Build a clean, maintainable, high-performance bilingual portfolio and digital ar
 
 Current focus:
 
-`T0009B - Supabase Backend Provisioning` and initial content import preparation
+`T0009D - Admin Works Editing and Media Uploads` completed; next is `T0010 - Dates / Concert Archive`.
 
 ---
 
@@ -38,6 +38,8 @@ Current focus:
 - `T0008 - Audio Player`
 - `T0009 - Score Reader`
 - `T0009A - Supabase Client Integration`
+- `T0009C - Admin Dashboard Foundation`
+- `T0009D - Admin Works Editing and Media Uploads`
 
 ## Current Implementation Status
 
@@ -72,12 +74,15 @@ Current focus:
 - A structured admin dashboard has been selected as the client content-management direction.
 - The Supabase content model spike is documented in `docs/SUPABASE_CONTENT_MODEL.md`, including schema, auth model, storage buckets, RLS policy direction, admin workflow, costs, backup/export approach, and upgrade path.
 - A local TypeScript proof of concept for the `works` content shape exists in `src/content/supabaseWorkPreview.ts`.
-- Real client media files have not been uploaded to Supabase Storage yet.
-- Real content metadata has been prepared but not yet applied to the hosted database.
+- Content metadata has been imported into the hosted database.
+- WATER and The Order of Time MP3 recordings and scores have been uploaded and verified by the project owner.
+- `/admin` provides DE/EN email/password login, session restoration, sign-out, and an allowlist-protected works list including drafts and archived works.
+- `/admin` now supports work creation/editing, draft/publish/archive status changes, direct media uploads to Supabase Storage, ordered media metadata, and primary audio/score/photo selection.
+- Browser regression checks use mocked Auth/data responses; real upload and edit verification should be performed with the allowlisted admin account.
 
 ## Current Blocker
 
-Large WAV uploads may exceed Supabase Free project's 50 MB file size limit. The first admin user is not bootstrapped yet.
+No current implementation blocker. Hosted backend/public media are connected, and the first admin account has been verified by the project owner. Real-world admin upload/edit flows still need a manual smoke test using actual media files.
 
 ---
 

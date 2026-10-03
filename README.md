@@ -64,6 +64,21 @@ Without those values, the app uses local placeholder content for development.
 
 Backend schema, RLS policies, Storage buckets, and setup steps are documented in `docs/SUPABASE_SETUP.md`.
 
+## Admin dashboard
+
+Start `npm run dev` and open `/admin`. The dashboard uses Supabase email/password
+sign-in and the existing admin allowlist. Create the first account using section 6
+of `docs/SUPABASE_SETUP.md`.
+
+The dashboard can create and edit works, switch draft/published/archived status,
+upload audio, score, and photo files to Supabase Storage, order media rows, and set
+the primary audio/score/photo used by the public site.
+
+Run `node scripts/verify-admin.cjs` with Playwright available and the dev server on
+port 5173 to check the Auth/access and dashboard flows using mocked responses.
+For a bundled Playwright package, pass its package directory as the first argument.
+Set `PLAYWRIGHT_CHANNEL=chrome` to use installed Chrome instead of Playwright Chromium.
+
 ## First task
 
 Start with:

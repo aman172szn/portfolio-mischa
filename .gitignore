@@ -4,6 +4,7 @@ dist/
 build/
 .vite/
 coverage/
+.impeccable/review/
 
 .env
 .env.local

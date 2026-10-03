@@ -5,8 +5,13 @@ import { WorkDetailRoute } from './routes/WorkDetailRoute';
 import { WorksIndexRoute } from './routes/WorksIndexRoute';
 import { RootRoute } from './routes/RootRoute';
 import { RoutePlaceholder } from './routes/RoutePlaceholder';
+import { AdminRoute } from './admin/AdminRoute';
 
 export const router = createBrowserRouter([
+  {
+    path: '/admin',
+    element: <AdminRoute />,
+  },
   {
     path: '/',
     element: <Navigate to="/de" replace />,

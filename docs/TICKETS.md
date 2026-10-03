@@ -433,7 +433,7 @@ T0005, T0007, T0008, T0009.
 
 ## T0009B — Supabase Backend Provisioning
 
-Status: BLOCKED
+Status: DONE
 
 ### Goal
 
@@ -470,9 +470,75 @@ T0005, T0009A.
 - admin allowlist is ready for future dashboard work
 - ordered work media metadata can be imported separately from binary file uploads
 
-### Blocker
+### Verification
 
-Requires Supabase account access, or a Supabase project reference plus credentials from the project owner. Local backend migrations and setup documentation are committed, but the hosted project cannot be created from this repository alone.
+Hosted project, migrations, public reads, initial content/media, first admin bootstrap,
+and real admin works-list access have been verified.
+
+---
+
+## T0009C — Admin Dashboard Foundation
+
+Status: DONE
+
+### Goal
+
+Give the client a secure entry point to the content dashboard.
+
+### Dependencies
+
+T0009A and the hosted schema/RLS from T0009B.
+
+### Requirements
+
+- standalone `/admin` route outside the public site shell
+- German default and English UI option
+- email/password sign-in, restored sessions, and sign-out
+- verify authenticated user and existing `is_admin()` allowlist
+- show all works, including drafts and archived entries, only to admins
+- publish status, update date, and public links for published works
+- loading, denied, error/retry, empty, and missing-configuration states
+- responsive, keyboard-accessible interface
+
+### Non-goals
+
+- content editing or publishing
+- media uploads and ordering
+- automatic translation
+- account registration or admin-user management
+
+### Verification
+
+Lint/build and browser tests with mocked Auth/data responses. Real admin login verification requires the first allowlisted Auth account.
+
+---
+
+## T0009D — Admin Works Editing and Media Uploads
+
+Status: DONE
+
+### Goal
+
+Allow the client to maintain works and their media from the dashboard.
+
+### Dependencies
+
+T0009C and a bootstrapped admin account.
+
+### Requirements
+
+- create and edit work metadata
+- draft/publish/archive controls
+- upload audio, scores, and photographs through existing Storage policies
+- ordered track titles and primary audio/score selection
+- validation, save feedback, and recoverable upload errors
+- retain German source and English content fields
+
+### Verification
+
+Lint/build and browser tests pass with mocked Auth/data responses. Real admin login has
+been verified; real file upload/edit smoke testing should be performed with production
+media before handing the dashboard to the client.
 
 ---
 
