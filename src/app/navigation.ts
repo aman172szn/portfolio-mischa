@@ -9,6 +9,7 @@ export const primaryNavigation: NavigationItem[] = [
   { label: { de: 'Start', en: 'Home' }, path: '/' },
   { label: { de: 'Werke', en: 'Works' }, path: '/works' },
   { label: { de: 'Termine', en: 'Dates' }, path: '/dates' },
+  { label: { de: 'Galerie', en: 'Gallery' }, path: '/gallery' },
   { label: { de: 'News', en: 'News' }, path: '/news' },
   { label: { de: 'Ueber', en: 'About' }, path: '/about' },
   { label: { de: 'Kontakt', en: 'Contact' }, path: '/contact' },

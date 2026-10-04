@@ -544,15 +544,37 @@ media before handing the dashboard to the client.
 
 ## T0010 — Dates / Concert Archive
 
-Status: TODO
+Status: PLANNED
 
 ### Goal
 
-Build the chronological performance archive.
+Build public and admin event management in small slices. Public visitors need a fast
+chronological concert archive; Mischa needs a simple admin list workflow for maintaining
+past and upcoming concerts.
 
 ### Dependencies
 
 T0005, T0006.
+
+### Direction
+
+- public site uses editorial upcoming/archive lists, not a full month-grid calendar
+- admin dashboard uses list editing, filtering, and draft/publish/archive controls
+- calendar-grid editing is not currently needed
+
+---
+
+## T0010A — Public Dates Data and Page
+
+Status: DONE
+
+### Goal
+
+Connect published events to the public Dates page and homepage preview.
+
+### Dependencies
+
+T0009B, T0006.
 
 ### Requirements
 
@@ -561,25 +583,69 @@ T0005, T0006.
 - chronological order
 - location/venue
 - work reference
+- read published events from Supabase when configured
+- keep local fallback placeholders when Supabase is missing or empty
+- homepage shows the next published upcoming events from the same data source
 
 ### Acceptance criteria
 
 - one event record can appear on the homepage and Dates page
 - mobile scanability is good
+- draft and archived events are not visible publicly
+
+### Verification
+
+Lint/build passed. Browser smoke checks covered the public Dates page, homepage dates
+preview, desktop/mobile overflow, and no page errors using current Supabase/fallback data.
 
 ---
 
-## T0011 — News + Archive
+## T0010B — Admin Dates Foundation
 
-Status: TODO
+Status: DONE
 
 ### Goal
 
-Build latest-news homepage preview and complete news archive.
+Allow Mischa to create and edit concert/date records from the admin dashboard.
 
 ### Dependencies
 
-T0005, T0006.
+T0010A, T0009C.
+
+### Requirements
+
+- admin Dates section
+- event list with upcoming/past/draft/published/archived filtering
+- create/edit event form
+- draft/publish/archive controls
+- related work selector
+- German and English fields
+- external ticket/info link
+- homepage featured toggle
+
+### Non-goals
+
+- drag-and-drop calendar editing
+- recurring events
+
+### Verification
+
+- Admin dashboard now has a Dates tab.
+- Dates can be listed, filtered, created, edited, drafted, published, and archived.
+- Event form includes German/English fields, related work selector, external link, and homepage featured toggle.
+- Verified with lint/build and mocked browser checks.
+
+## T0011 — News + Archive
+
+Status: DONE
+
+### Goal
+
+Build latest-news homepage preview and complete news archive from supplied Mischa press material.
+
+### Dependencies
+
+T0006.
 
 ### Requirements
 
@@ -587,6 +653,57 @@ T0005, T0006.
 - chronological archive
 - individual article route
 - bilingual content
+- use supplied `news.txt` material only
+- no admin add/remove workflow for news
+
+### Non-goals
+
+- admin news management
+- Supabase news editing
+- invented publication dates
+
+### Verification
+
+- Homepage news preview uses curated supplied press items.
+- `/news` renders the full archive.
+- `/news/:slug` renders individual article pages.
+- Lint/build and browser smoke checks passed.
+
+---
+
+## T0011A — Gallery and Browser-Ready Photography
+
+Status: DONE
+
+### Goal
+
+Use the supplied `pictures-sent` folder strategically without making the website load the raw image library.
+
+### Dependencies
+
+T0004, T0006, T0011.
+
+### Requirements
+
+- inspect supplied photographs
+- decide which images suit homepage, portrait/about, backgrounds, and gallery
+- create browser-ready optimized image versions
+- add public Gallery section
+- load gallery images progressively while scrolling
+- avoid relying on Supabase bandwidth for static gallery images
+
+### Non-goals
+
+- works-specific images managed by admin
+- photo upload/admin workflow
+- serving original full-resolution photos publicly
+
+### Verification
+
+- Raw supplied images were optimized into public web variants.
+- Homepage uses selected supplied photography instead of placeholders.
+- Gallery route renders optimized images with lazy/progressive loading.
+- Lint/build and browser smoke checks passed.
 
 ---
 

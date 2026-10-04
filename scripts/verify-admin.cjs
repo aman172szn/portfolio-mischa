@@ -18,6 +18,22 @@ async function main() {
   let emptyWorks = false;
   let worksRequests = 0;
   let uploadRequests = 0;
+  const makeEvent = (overrides) => ({
+    city: null,
+    created_at: '2026-10-03T00:00:00Z',
+    description_de: null,
+    description_en: null,
+    event_date: null,
+    event_title_de: null,
+    event_title_en: null,
+    external_link: null,
+    featured: false,
+    type_de: null,
+    type_en: null,
+    venue: null,
+    work_id: null,
+    ...overrides,
+  });
   const makeWork = (overrides) => ({
     audio_path: null,
     category: null,
@@ -37,6 +53,10 @@ async function main() {
     makeWork({ id: 'work-1', slug: 'water', title_de: 'WATER', title_en: 'WATER', year: 2022, status: 'published', updated_at: '2026-10-03T00:00:00Z' }),
     makeWork({ id: 'work-2', slug: 'draft-work', title_de: 'Testentwurf', title_en: 'Test draft', year: null, status: 'draft', updated_at: '2026-10-03T00:00:00Z', sort_order: 20 }),
     makeWork({ id: 'work-3', slug: 'archive-work', title_de: 'Testarchiv', title_en: 'Test archive', year: 2020, status: 'archived', updated_at: '2026-10-03T00:00:00Z', sort_order: 30 }),
+  ];
+  let events = [
+    makeEvent({ id: 'event-1', event_date: '2026-12-12', event_title_de: 'Konzert Berlin', event_title_en: 'Concert Berlin', city: 'Berlin', venue: 'Konzerthaus', status: 'published', work_id: 'work-1', updated_at: '2026-10-03T00:00:00Z' }),
+    makeEvent({ id: 'event-2', event_date: '2025-01-05', event_title_de: 'Archivtermin', event_title_en: 'Archive date', city: 'Hamburg', status: 'draft', updated_at: '2026-10-03T00:00:00Z' }),
   ];
   let mediaRows = [
     {
@@ -132,6 +152,26 @@ async function main() {
         return route.fulfill({ json: [] });
       }
     }
+    if (url.pathname.endsWith('/events')) {
+      if (method === 'GET') return route.fulfill({ json: events });
+      if (method === 'POST') {
+        const body = JSON.parse(route.request().postData() || '{}');
+        const created = makeEvent({
+          id: 'event-new',
+          created_at: '2026-10-03T00:00:00Z',
+          updated_at: '2026-10-03T00:00:00Z',
+          ...body,
+        });
+        events = [created, ...events];
+        return route.fulfill({ status: 201, json: created });
+      }
+      if (method === 'PATCH') {
+        const id = url.searchParams.get('id')?.slice(3);
+        const body = JSON.parse(route.request().postData() || '{}');
+        events = events.map((item) => item.id === id ? { ...item, ...body, updated_at: '2026-10-03T00:00:00Z' } : item);
+        return route.fulfill({ json: events.find((item) => item.id === id) });
+      }
+    }
     return route.abort();
   });
   await context.route('**/storage/v1/object/**', async (route) => {
@@ -160,7 +200,9 @@ async function main() {
     assert.equal(await page.locator('tbody tr').count(), 3);
     assert.equal(await page.locator('tbody a').count(), 1, 'Only published works link to public pages');
     await page.getByRole('textbox', { name: 'Title DE', exact: true }).waitFor();
-    await page.getByRole('textbox', { name: 'Title DE', exact: true }).fill('WATER edited');
+    await page.getByRole('textbox', { name: 'Title DE', exact: true }).fill('');
+    await page.getByRole('textbox', { name: 'Title DE', exact: true }).pressSequentially('WATER edited');
+    assert.equal(await page.getByRole('textbox', { name: 'Title DE', exact: true }).inputValue(), 'WATER edited');
     await page.getByRole('button', { name: 'Save', exact: true }).first().click();
     await page.getByText('Saved.', { exact: true }).waitFor();
     assert.equal(works.find((work) => work.id === 'work-1').title_de, 'WATER edited');
@@ -177,6 +219,29 @@ async function main() {
     await page.waitForTimeout(500);
     assert.equal(uploadRequests, 1);
     assert.equal(mediaRows.some((row) => row.title_de === 'Uploaded track'), true);
+    await page.getByRole('button', { name: 'Dates', exact: true }).click();
+    await page.getByRole('heading', { name: 'Dates', exact: true }).waitFor();
+    assert.equal(await page.locator('tbody tr').count(), 2);
+    await page.getByRole('textbox', { name: 'Event title DE', exact: true }).fill('');
+    await page.getByRole('textbox', { name: 'Event title DE', exact: true }).pressSequentially('Konzert Berlin edited');
+    assert.equal(await page.getByRole('textbox', { name: 'Event title DE', exact: true }).inputValue(), 'Konzert Berlin edited');
+    await page.getByRole('checkbox', { name: 'Feature on homepage', exact: true }).check();
+    await page.getByRole('button', { name: 'Save', exact: true }).first().click();
+    await page.getByText('Saved.', { exact: true }).waitFor();
+    assert.equal(events.find((event) => event.id === 'event-1').event_title_de, 'Konzert Berlin edited');
+    assert.equal(events.find((event) => event.id === 'event-1').featured, true);
+    await page.getByLabel('Filter').selectOption('draft');
+    assert.equal(await page.locator('tbody tr').count(), 1);
+    await page.getByRole('button', { name: 'New date', exact: true }).click();
+    await page.getByRole('textbox', { name: 'Event title DE', exact: true }).fill('Neuer Termin');
+    await page.getByLabel('Date', { exact: true }).fill('2026-12-24');
+    await page.getByLabel('Related work').selectOption('work-1');
+    await page.getByRole('button', { name: 'Create date', exact: true }).click();
+    await page.getByText('Date created.', { exact: true }).waitFor();
+    assert.equal(events.some((event) => event.event_title_de === 'Neuer Termin' && event.work_id === 'work-1'), true);
+    await page.getByRole('button', { name: 'Publish', exact: true }).click();
+    await page.getByText('Saved.', { exact: true }).waitFor();
+    assert.equal(events.find((event) => event.id === 'event-new').status, 'published');
     await page.screenshot({ path: path.join(output, 'desktop.png') });
     await page.setViewportSize({ width: 390, height: 844 });
     await page.screenshot({ path: path.join(output, 'mobile.png') });

@@ -1,17 +1,25 @@
-import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { Link } from 'react-router-dom';
 import {
+  createAdminEvent,
   createAdminWork,
   deleteAdminMedia,
   makeWorkSlug,
+  readAdminEvents,
   readAdminWorkDetail,
+  readAdminWorkOptions,
   readAdminWorks,
   setPrimaryAdminMedia,
+  updateAdminEvent,
+  updateAdminEventStatus,
   updateAdminMedia,
   updateAdminWork,
   updateAdminWorkStatus,
   uploadAdminMedia,
+  type AdminEvent,
+  type AdminEventInput,
+  type AdminEventStatus,
   type AdminMediaType,
   type AdminWork,
   type AdminWorkDetail,
@@ -53,7 +61,14 @@ const labels = {
     uploadFailed: 'Upload fehlgeschlagen. Bitte Dateityp, Groesse und Verbindung pruefen.',
     saveFailed: 'Speichern fehlgeschlagen. Bitte pruefen und erneut versuchen.',
     deleteFailed: 'Entfernen fehlgeschlagen. Bitte erneut versuchen.',
-    selectWork: 'Werk auswaehlen', selected: 'Ausgewaehlt',
+    selectWork: 'Werk auswaehlen', selected: 'Ausgewaehlt', dates: 'Termine',
+    eventsCount: 'Termine insgesamt', newEvent: 'Neuer Termin', createEvent: 'Termin erstellen',
+    eventDate: 'Datum', eventTitleDe: 'Termintitel DE', eventTitleEn: 'Termintitel EN',
+    city: 'Stadt', venue: 'Ort', typeDe: 'Typ DE', typeEn: 'Typ EN',
+    relatedWork: 'Werkbezug', noRelatedWork: 'Kein Werkbezug', externalLink: 'Externer Link',
+    noEvents: 'Noch keine Termine vorhanden.', eventCreated: 'Termin erstellt.',
+    eventsFailed: 'Der Zugriff oder die Terminliste konnte nicht geladen werden. Bitte erneut versuchen oder neu anmelden.',
+    filter: 'Filter', all: 'Alle', upcoming: 'Kommend', past: 'Vergangen',
   },
   en: {
     admin: 'Administration', website: 'View website', login: 'Sign in', logout: 'Sign out',
@@ -81,7 +96,14 @@ const labels = {
     uploadFailed: 'Upload failed. Check the file type, size, and connection.',
     saveFailed: 'Save failed. Check the fields and try again.',
     deleteFailed: 'Remove failed. Please try again.',
-    selectWork: 'Select work', selected: 'Selected',
+    selectWork: 'Select work', selected: 'Selected', dates: 'Dates',
+    eventsCount: 'events in total', newEvent: 'New date', createEvent: 'Create date',
+    eventDate: 'Date', eventTitleDe: 'Event title DE', eventTitleEn: 'Event title EN',
+    city: 'City', venue: 'Venue', typeDe: 'Type DE', typeEn: 'Type EN',
+    relatedWork: 'Related work', noRelatedWork: 'No related work', externalLink: 'External link',
+    noEvents: 'No dates yet.', eventCreated: 'Date created.',
+    eventsFailed: 'Access or the dates list could not be loaded. Try again or sign in again.',
+    filter: 'Filter', all: 'All', upcoming: 'Upcoming', past: 'Past',
   },
 };
 
@@ -103,6 +125,22 @@ const emptyWorkForm: AdminWorkInput = {
 
 const mediaTypes = ['audio', 'score', 'photo'] as const;
 
+const emptyEventForm: AdminEventInput = {
+  event_date: null,
+  city: null,
+  venue: null,
+  event_title_de: null,
+  event_title_en: null,
+  type_de: null,
+  type_en: null,
+  description_de: null,
+  description_en: null,
+  external_link: null,
+  featured: false,
+  status: 'draft',
+  work_id: null,
+};
+
 function toInputValue(value: string | number | null) {
   return value === null ? '' : String(value);
 }
@@ -110,6 +148,10 @@ function toInputValue(value: string | number | null) {
 function nullableText(value: FormDataEntryValue | null) {
   const text = String(value ?? '').trim();
   return text.length > 0 ? text : null;
+}
+
+function nullableInputText(value: string) {
+  return value.length > 0 ? value : null;
 }
 
 function nullableNumber(value: FormDataEntryValue | null) {
@@ -155,8 +197,50 @@ function formDataToWorkInput(data: FormData, fallbackStatus: AdminWorkStatus): A
   };
 }
 
+function eventToForm(event: AdminEvent | null): AdminEventInput {
+  if (!event) return emptyEventForm;
+  return {
+    event_date: event.event_date,
+    city: event.city,
+    venue: event.venue,
+    event_title_de: event.event_title_de,
+    event_title_en: event.event_title_en,
+    type_de: event.type_de,
+    type_en: event.type_en,
+    description_de: event.description_de,
+    description_en: event.description_en,
+    external_link: event.external_link,
+    featured: event.featured,
+    status: event.status,
+    work_id: event.work_id,
+  };
+}
+
+function formDataToEventInput(data: FormData, fallbackStatus: AdminEventStatus): AdminEventInput {
+  return {
+    event_date: nullableText(data.get('event_date')),
+    city: nullableText(data.get('city')),
+    venue: nullableText(data.get('venue')),
+    event_title_de: nullableText(data.get('event_title_de')),
+    event_title_en: nullableText(data.get('event_title_en')),
+    type_de: nullableText(data.get('type_de')),
+    type_en: nullableText(data.get('type_en')),
+    description_de: nullableText(data.get('description_de')),
+    description_en: nullableText(data.get('description_en')),
+    external_link: nullableText(data.get('external_link')),
+    featured: data.get('featured') === 'on',
+    status: fallbackStatus,
+    work_id: nullableText(data.get('work_id')),
+  };
+}
+
 function dateLabel(value: string, locale: Locale) {
   return new Intl.DateTimeFormat(locale === 'de' ? 'de-DE' : 'en-GB').format(new Date(value));
+}
+
+function dateOnlyLabel(value: string | null, locale: Locale) {
+  if (!value) return '-';
+  return new Intl.DateTimeFormat(locale === 'de' ? 'de-DE' : 'en-GB').format(new Date(`${value}T00:00:00`));
 }
 
 function MediaManager({
@@ -394,11 +478,11 @@ function WorkEditor({
     {feedback && <p className={`admin-feedback admin-feedback--${feedback.type}`} role={feedback.type === 'error' ? 'alert' : 'status'}>{feedback.message}</p>}
     <form className="admin-work-form" onSubmit={save}>
       <label>{copy.titleDe}<input name="title_de" required value={form.title_de} onChange={(event) => updateField('title_de', event.target.value)} /></label>
-      <label>{copy.titleEn}<input name="title_en" value={toInputValue(form.title_en)} onChange={(event) => updateField('title_en', nullableText(event.target.value))} /></label>
+      <label>{copy.titleEn}<input name="title_en" value={toInputValue(form.title_en)} onChange={(event) => updateField('title_en', nullableInputText(event.target.value))} /></label>
       <label>{copy.slug}<input name="slug" required value={form.slug} onChange={(event) => updateField('slug', event.target.value)} onBlur={() => updateField('slug', makeWorkSlug(form.slug || form.title_de))} /></label>
       <label>{copy.year}<input name="year" type="number" value={toInputValue(form.year)} onChange={(event) => updateField('year', event.target.value ? Number(event.target.value) : null)} /></label>
-      <label>{copy.category}<input name="category" value={toInputValue(form.category)} onChange={(event) => updateField('category', nullableText(event.target.value))} /></label>
-      <label>{copy.duration}<input name="duration" value={toInputValue(form.duration)} onChange={(event) => updateField('duration', nullableText(event.target.value))} /></label>
+      <label>{copy.category}<input name="category" value={toInputValue(form.category)} onChange={(event) => updateField('category', nullableInputText(event.target.value))} /></label>
+      <label>{copy.duration}<input name="duration" value={toInputValue(form.duration)} onChange={(event) => updateField('duration', nullableInputText(event.target.value))} /></label>
       <label>{copy.sortOrder}<input name="sort_order" type="number" value={form.sort_order} onChange={(event) => updateField('sort_order', Number(event.target.value || 100))} /></label>
       <label className="admin-check"><input name="featured" type="checkbox" checked={form.featured} onChange={(event) => updateField('featured', event.target.checked)} /> {copy.featured}</label>
       <label>{copy.status}<select name="status" value={form.status} onChange={(event) => updateField('status', event.target.value as AdminWorkStatus)}>
@@ -406,10 +490,10 @@ function WorkEditor({
         <option value="published">{copy.published}</option>
         <option value="archived">{copy.archived}</option>
       </select></label>
-      <label className="admin-form-wide">{copy.instrumentationDe}<textarea name="instrumentation_de" value={toInputValue(form.instrumentation_de)} onChange={(event) => updateField('instrumentation_de', nullableText(event.target.value))} /></label>
-      <label className="admin-form-wide">{copy.instrumentationEn}<textarea name="instrumentation_en" value={toInputValue(form.instrumentation_en)} onChange={(event) => updateField('instrumentation_en', nullableText(event.target.value))} /></label>
-      <label className="admin-form-wide">{copy.descriptionDe}<textarea name="description_de" rows={5} value={toInputValue(form.description_de)} onChange={(event) => updateField('description_de', nullableText(event.target.value))} /></label>
-      <label className="admin-form-wide">{copy.descriptionEn}<textarea name="description_en" rows={5} value={toInputValue(form.description_en)} onChange={(event) => updateField('description_en', nullableText(event.target.value))} /></label>
+      <label className="admin-form-wide">{copy.instrumentationDe}<textarea name="instrumentation_de" value={toInputValue(form.instrumentation_de)} onChange={(event) => updateField('instrumentation_de', nullableInputText(event.target.value))} /></label>
+      <label className="admin-form-wide">{copy.instrumentationEn}<textarea name="instrumentation_en" value={toInputValue(form.instrumentation_en)} onChange={(event) => updateField('instrumentation_en', nullableInputText(event.target.value))} /></label>
+      <label className="admin-form-wide">{copy.descriptionDe}<textarea name="description_de" rows={5} value={toInputValue(form.description_de)} onChange={(event) => updateField('description_de', nullableInputText(event.target.value))} /></label>
+      <label className="admin-form-wide">{copy.descriptionEn}<textarea name="description_en" rows={5} value={toInputValue(form.description_en)} onChange={(event) => updateField('description_en', nullableInputText(event.target.value))} /></label>
       <div className="admin-form-actions admin-form-wide">
         <button className="admin-button admin-button--primary" type="submit" disabled={saving}>{saving ? copy.saving : work ? copy.save : copy.create}</button>
         <button className="admin-button" type="button" disabled={saving} onClick={() => changeStatus('draft')}>{copy.makeDraft}</button>
@@ -484,11 +568,199 @@ function AdminWorks({ locale }: { locale: Locale }) {
   </div>;
 }
 
+function EventEditor({
+  event,
+  locale,
+  workOptions,
+  onChanged,
+}: {
+  event: AdminEvent | null;
+  locale: Locale;
+  workOptions: Pick<AdminWork, 'id' | 'title_de' | 'title_en' | 'year'>[];
+  onChanged: (eventId?: string) => void;
+}) {
+  const copy = labels[locale];
+  const [form, setForm] = useState<AdminEventInput>(eventToForm(event));
+  const [saving, setSaving] = useState(false);
+  const [feedback, setFeedback] = useState<Feedback>(null);
+  const preserveFeedbackForEventId = useRef<string | null>(null);
+
+  useEffect(() => {
+    setForm(eventToForm(event));
+    if (preserveFeedbackForEventId.current !== event?.id) {
+      setFeedback(null);
+    }
+    preserveFeedbackForEventId.current = null;
+  }, [event]);
+
+  function updateField<Field extends keyof AdminEventInput>(field: Field, value: AdminEventInput[Field]) {
+    setForm((current) => ({ ...current, [field]: value }));
+  }
+
+  async function save(saveEvent: FormEvent<HTMLFormElement>) {
+    saveEvent.preventDefault();
+    const input = formDataToEventInput(new FormData(saveEvent.currentTarget), form.status);
+    setSaving(true);
+    setFeedback(null);
+    try {
+      const savedEvent = event ? await updateAdminEvent(event.id, input) : await createAdminEvent(input);
+      setForm(eventToForm(savedEvent));
+      setFeedback({ type: 'success', message: event ? copy.saved : copy.eventCreated });
+      preserveFeedbackForEventId.current = savedEvent.id;
+      onChanged(savedEvent.id);
+    } catch {
+      setFeedback({ type: 'error', message: copy.saveFailed });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function changeStatus(status: AdminEventStatus) {
+    if (!event) {
+      setForm((current) => ({ ...current, status }));
+      return;
+    }
+    setSaving(true);
+    setFeedback(null);
+    try {
+      const updated = await updateAdminEventStatus(event.id, status);
+      setForm(eventToForm(updated));
+      setFeedback({ type: 'success', message: copy.saved });
+      preserveFeedbackForEventId.current = event.id;
+      onChanged(event.id);
+    } catch {
+      setFeedback({ type: 'error', message: copy.saveFailed });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return <section className="admin-editor" aria-labelledby="admin-event-editor-title">
+    <div className="admin-section-heading">
+      <h2 id="admin-event-editor-title">{event ? copy.edit : copy.newEvent}</h2>
+    </div>
+    {feedback && <p className={`admin-feedback admin-feedback--${feedback.type}`} role={feedback.type === 'error' ? 'alert' : 'status'}>{feedback.message}</p>}
+    <form className="admin-event-form" onSubmit={save}>
+      <label>{copy.eventTitleDe}<input name="event_title_de" value={toInputValue(form.event_title_de)} onChange={(inputEvent) => updateField('event_title_de', nullableInputText(inputEvent.target.value))} /></label>
+      <label>{copy.eventTitleEn}<input name="event_title_en" value={toInputValue(form.event_title_en)} onChange={(inputEvent) => updateField('event_title_en', nullableInputText(inputEvent.target.value))} /></label>
+      <label>{copy.eventDate}<input name="event_date" type="date" value={toInputValue(form.event_date)} onChange={(inputEvent) => updateField('event_date', nullableInputText(inputEvent.target.value))} /></label>
+      <label>{copy.status}<select name="status" value={form.status} onChange={(inputEvent) => updateField('status', inputEvent.target.value as AdminEventStatus)}>
+        <option value="draft">{copy.draft}</option>
+        <option value="published">{copy.published}</option>
+        <option value="archived">{copy.archived}</option>
+      </select></label>
+      <label>{copy.city}<input name="city" value={toInputValue(form.city)} onChange={(inputEvent) => updateField('city', nullableInputText(inputEvent.target.value))} /></label>
+      <label>{copy.venue}<input name="venue" value={toInputValue(form.venue)} onChange={(inputEvent) => updateField('venue', nullableInputText(inputEvent.target.value))} /></label>
+      <label>{copy.typeDe}<input name="type_de" value={toInputValue(form.type_de)} onChange={(inputEvent) => updateField('type_de', nullableInputText(inputEvent.target.value))} /></label>
+      <label>{copy.typeEn}<input name="type_en" value={toInputValue(form.type_en)} onChange={(inputEvent) => updateField('type_en', nullableInputText(inputEvent.target.value))} /></label>
+      <label>{copy.relatedWork}<select name="work_id" value={toInputValue(form.work_id)} onChange={(inputEvent) => updateField('work_id', nullableInputText(inputEvent.target.value))}>
+        <option value="">{copy.noRelatedWork}</option>
+        {workOptions.map((work) => <option key={work.id} value={work.id}>
+          {locale === 'en' ? work.title_en || work.title_de : work.title_de}{work.year ? ` (${work.year})` : ''}
+        </option>)}
+      </select></label>
+      <label>{copy.externalLink}<input name="external_link" type="url" value={toInputValue(form.external_link)} onChange={(inputEvent) => updateField('external_link', nullableInputText(inputEvent.target.value))} /></label>
+      <label className="admin-check"><input name="featured" type="checkbox" checked={form.featured} onChange={(inputEvent) => updateField('featured', inputEvent.target.checked)} /> {copy.featured}</label>
+      <label className="admin-form-wide">{copy.descriptionDe}<textarea name="description_de" rows={4} value={toInputValue(form.description_de)} onChange={(inputEvent) => updateField('description_de', nullableInputText(inputEvent.target.value))} /></label>
+      <label className="admin-form-wide">{copy.descriptionEn}<textarea name="description_en" rows={4} value={toInputValue(form.description_en)} onChange={(inputEvent) => updateField('description_en', nullableInputText(inputEvent.target.value))} /></label>
+      <div className="admin-form-actions admin-form-wide">
+        <button className="admin-button admin-button--primary" type="submit" disabled={saving}>{saving ? copy.saving : event ? copy.save : copy.createEvent}</button>
+        <button className="admin-button" type="button" disabled={saving} onClick={() => changeStatus('draft')}>{copy.makeDraft}</button>
+        <button className="admin-button" type="button" disabled={saving} onClick={() => changeStatus('published')}>{copy.publish}</button>
+        <button className="admin-button" type="button" disabled={saving} onClick={() => changeStatus('archived')}>{copy.archive}</button>
+      </div>
+    </form>
+  </section>;
+}
+
+function AdminDates({ locale }: { locale: Locale }) {
+  const copy = labels[locale];
+  const [result, setResult] = useState<{ status: LoadState; events: AdminEvent[] }>({ status: 'loading', events: [] });
+  const [workOptions, setWorkOptions] = useState<Pick<AdminWork, 'id' | 'title_de' | 'title_en' | 'year'>[]>([]);
+  const [attempt, setAttempt] = useState(0);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [filter, setFilter] = useState<'all' | 'upcoming' | 'past' | AdminEventStatus>('all');
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([readAdminEvents(), readAdminWorkOptions()]).then(([events, works]) => {
+      if (cancelled) return;
+      const nextEvents = events ?? [];
+      setResult({ status: events === null ? 'denied' : 'ready', events: nextEvents });
+      setWorkOptions(works);
+      setSelectedEventId((current) => current ?? nextEvents[0]?.id ?? null);
+    }).catch(() => {
+      if (!cancelled) setResult({ status: 'error', events: [] });
+    });
+    return () => { cancelled = true; };
+  }, [attempt]);
+
+  function refresh(eventId?: string) {
+    if (eventId) setSelectedEventId(eventId);
+    setAttempt((value) => value + 1);
+  }
+
+  function retry() {
+    setResult({ status: 'loading', events: [] });
+    setAttempt((value) => value + 1);
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  const filteredEvents = result.events.filter((event) => {
+    if (filter === 'all') return true;
+    if (filter === 'upcoming') return Boolean(event.event_date && event.event_date >= today);
+    if (filter === 'past') return Boolean(event.event_date && event.event_date < today);
+    return event.status === filter;
+  });
+  const selectedEvent = result.events.find((event) => event.id === selectedEventId) ?? null;
+
+  if (result.status === 'loading') return <p role="status">{copy.loading}</p>;
+  if (result.status === 'denied') return <section className="admin-message"><h1>{copy.denied}</h1><p>{copy.deniedBody}</p></section>;
+  if (result.status === 'error') return <section className="admin-message"><p role="alert">{copy.eventsFailed}</p><button className="admin-button" onClick={retry}>{copy.retry}</button></section>;
+
+  return <div className="admin-workspace">
+    <section aria-labelledby="admin-events-title" className="admin-list-panel">
+      <div className="admin-section-heading">
+        <h1 id="admin-events-title">{copy.dates}</h1>
+        <p>{result.events.length} {copy.eventsCount}</p>
+      </div>
+      <div className="admin-list-actions">
+        <button className="admin-button admin-button--primary" type="button" onClick={() => setSelectedEventId(null)}>{copy.newEvent}</button>
+        <label>{copy.filter}<select value={filter} onChange={(event) => setFilter(event.target.value as typeof filter)}>
+          <option value="all">{copy.all}</option>
+          <option value="upcoming">{copy.upcoming}</option>
+          <option value="past">{copy.past}</option>
+          <option value="draft">{copy.draft}</option>
+          <option value="published">{copy.published}</option>
+          <option value="archived">{copy.archived}</option>
+        </select></label>
+      </div>
+      {filteredEvents.length === 0 ? <p>{copy.noEvents}</p> : <div className="admin-table-scroll" tabIndex={0} role="region" aria-label={copy.dates}>
+        <table className="admin-table">
+          <thead><tr><th scope="col">{copy.title}</th><th scope="col">{copy.eventDate}</th><th scope="col">{copy.venue}</th><th scope="col">{copy.status}</th><th scope="col">{copy.updated}</th><th scope="col"><span className="admin-sr-only">{copy.edit}</span></th></tr></thead>
+          <tbody>{filteredEvents.map((event) => <tr key={event.id} className={event.id === selectedEventId ? 'is-selected' : undefined}>
+            <th scope="row">{locale === 'en' ? event.event_title_en || event.event_title_de || '-' : event.event_title_de || event.event_title_en || '-'}</th>
+            <td>{dateOnlyLabel(event.event_date, locale)}</td>
+            <td>{[event.city, event.venue].filter(Boolean).join(' / ') || '-'}</td>
+            <td><span className={`admin-status admin-status--${event.status}`}>{copy[event.status]}</span></td>
+            <td>{dateLabel(event.updated_at, locale)}</td>
+            <td className="admin-row-actions">
+              <button className="admin-button" type="button" onClick={() => setSelectedEventId(event.id)}>{event.id === selectedEventId ? copy.selected : copy.edit}</button>
+            </td>
+          </tr>)}</tbody>
+        </table>
+      </div>}
+    </section>
+    <EventEditor event={selectedEvent} locale={locale} workOptions={workOptions} onChanged={refresh} />
+  </div>;
+}
+
 export function AdminRoute() {
   const [locale, setLocale] = useState<Locale>('de');
   const [session, setSession] = useState<Session | null>(null);
   const [sessionState, setSessionState] = useState<'loading' | 'ready' | 'error'>('loading');
   const [sessionAttempt, setSessionAttempt] = useState(0);
+  const [section, setSection] = useState<'works' | 'dates'>('works');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<'loginFailed' | 'logoutFailed' | null>(null);
   const copy = labels[locale];
@@ -561,7 +833,13 @@ export function AdminRoute() {
       {!supabase ? <p role="alert">{copy.unconfigured}</p> : sessionState === 'loading' ? <p role="status">{copy.loading}</p> : sessionState === 'error' ? <div className="admin-message"><p role="alert">{copy.sessionFailed}</p><button className="admin-button" onClick={() => { setSessionState('loading'); setSessionAttempt((value) => value + 1); }}>{copy.retry}</button></div> : session ? <>
         <p className="admin-account">{session.user.email}</p>
         {error && <p className="admin-error" role="alert">{copy[error]}</p>}
-        <AdminWorks key={`${session.user.id}:${session.access_token}`} locale={locale} />
+        <nav className="admin-tabs" aria-label={copy.admin}>
+          <button type="button" aria-current={section === 'works' ? 'page' : undefined} onClick={() => setSection('works')}>{copy.works}</button>
+          <button type="button" aria-current={section === 'dates' ? 'page' : undefined} onClick={() => setSection('dates')}>{copy.dates}</button>
+        </nav>
+        {section === 'works'
+          ? <AdminWorks key={`works:${session.user.id}:${session.access_token}`} locale={locale} />
+          : <AdminDates key={`dates:${session.user.id}:${session.access_token}`} locale={locale} />}
       </> : <section className="admin-login" aria-labelledby="admin-login-title">
         <h1 id="admin-login-title">{copy.login}</h1>
         <form onSubmit={signIn}>

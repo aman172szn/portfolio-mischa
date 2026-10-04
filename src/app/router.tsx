@@ -1,6 +1,10 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 
 import { SiteLayout } from './layout/SiteLayout';
+import { DatesIndexRoute } from './routes/DatesIndexRoute';
+import { GalleryRoute } from './routes/GalleryRoute';
+import { NewsDetailRoute } from './routes/NewsDetailRoute';
+import { NewsIndexRoute } from './routes/NewsIndexRoute';
 import { WorkDetailRoute } from './routes/WorkDetailRoute';
 import { WorksIndexRoute } from './routes/WorksIndexRoute';
 import { RootRoute } from './routes/RootRoute';
@@ -34,11 +38,19 @@ export const router = createBrowserRouter([
       },
       {
         path: 'dates',
-        element: <RoutePlaceholder label={{ de: 'Termine', en: 'Dates' }} />,
+        element: <DatesIndexRoute />,
+      },
+      {
+        path: 'gallery',
+        element: <GalleryRoute />,
       },
       {
         path: 'news',
-        element: <RoutePlaceholder label={{ de: 'News', en: 'News' }} />,
+        element: <NewsIndexRoute />,
+      },
+      {
+        path: 'news/:slug',
+        element: <NewsDetailRoute />,
       },
       {
         path: 'about',

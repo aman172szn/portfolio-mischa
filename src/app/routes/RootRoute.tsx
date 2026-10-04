@@ -1,6 +1,16 @@
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { getLocale, localizePath } from '../i18n';
+import { getHomepageEvents, type PublicEvent } from '../../content/events';
+import {
+  contactBackgroundImage,
+  featuredWorkBackgroundImage,
+  galleryPreviewImages,
+  homeHeroImage,
+  portraitImage,
+} from '../../content/gallery';
+import { getFeaturedNewsItems } from '../../content/news';
 
 const homeCopy = {
   heroMeta: {
@@ -22,12 +32,12 @@ const homeCopy = {
     },
   },
   portraitLabel: {
-    de: 'Portraet-Platzhalter',
-    en: 'Portrait placeholder',
+    de: 'Mischa Tangian dirigiert',
+    en: 'Mischa Tangian conducting',
   },
   portraitCaption: {
-    de: 'Portraet-Platzhalter - durch freigegebene Fotografie ersetzen.',
-    en: 'Portrait placeholder - replace with approved photography.',
+    de: 'Ausgewaehltes Bild fuer die Startseite aus dem gelieferten Fotomaterial.',
+    en: 'Selected homepage image from the supplied photography.',
   },
   currentTitle: {
     de: 'Aktuelle Termine',
@@ -37,28 +47,6 @@ const homeCopy = {
     de: 'Alle Termine',
     en: 'All dates',
   },
-  dates: [
-    {
-      title: {
-        de: 'Kommender Auftritt Platzhalter',
-        en: 'Upcoming performance placeholder',
-      },
-      meta: {
-        de: 'Stadt, Ort, Programm und Werkbezug werden noch geliefert.',
-        en: 'City, venue, programme and work reference to be supplied.',
-      },
-    },
-    {
-      title: {
-        de: 'Archiv-Eintrag Platzhalter',
-        en: 'Archive entry placeholder',
-      },
-      meta: {
-        de: 'Historische Konzertdetails werden dasselbe Terminmodell nutzen.',
-        en: 'Historical concert details will use the same event model.',
-      },
-    },
-  ],
   dateTbc: {
     de: 'Datum folgt',
     en: 'Date TBC',
@@ -88,39 +76,21 @@ const homeCopy = {
     en: 'Download score',
   },
   newsTitle: {
-    de: 'Neueste News',
-    en: 'Latest News',
+    de: 'Presse und News',
+    en: 'Press and News',
   },
   newsArchive: {
     de: 'News-Archiv',
     en: 'News archive',
   },
-  publicationTbc: {
-    de: 'Veroeffentlichungsdatum folgt',
-    en: 'Publication date TBC',
+  galleryTitle: {
+    de: 'Galerie',
+    en: 'Gallery',
   },
-  news: [
-    {
-      title: {
-        de: 'News-Platzhalter',
-        en: 'News item placeholder',
-      },
-      body: {
-        de: 'Kurzer deutscher Quelltext und automatische englische Uebersetzung werden ueber den Admin-Workflow verwaltet.',
-        en: 'Short German source text and automatic English translation will be managed through the admin workflow.',
-      },
-    },
-    {
-      title: {
-        de: 'Archiv-Platzhalter',
-        en: 'Archive item placeholder',
-      },
-      body: {
-        de: 'Die Startseite zeigt ein oder zwei aktuelle Beitraege mit einem klaren Weg ins vollstaendige Archiv.',
-        en: 'The homepage will surface one or two recent posts with a clear path into the full archive.',
-      },
-    },
-  ],
+  galleryArchive: {
+    de: 'Alle Bilder',
+    en: 'All images',
+  },
   aboutTitle: {
     de: 'Ueber',
     en: 'About',
@@ -147,9 +117,32 @@ const homeCopy = {
   },
 } as const;
 
+function formatDate(value: string | null, locale: 'de' | 'en') {
+  if (!value) return homeCopy.dateTbc[locale];
+  return new Intl.DateTimeFormat(locale === 'de' ? 'de-DE' : 'en-GB', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(`${value}T00:00:00`));
+}
+
+function eventMeta(event: PublicEvent) {
+  return [event.type, event.venue, event.city].filter(Boolean).join(' · ');
+}
+
 export function RootRoute() {
   const { locale: localeParam } = useParams();
   const locale = getLocale(localeParam);
+  const [events, setEvents] = useState<PublicEvent[]>([]);
+  const newsItems = getFeaturedNewsItems();
+
+  useEffect(() => {
+    let cancelled = false;
+    getHomepageEvents(locale).then((nextEvents) => {
+      if (!cancelled) setEvents(nextEvents);
+    });
+    return () => { cancelled = true; };
+  }, [locale]);
 
   return (
     <div className="home-page">
@@ -171,7 +164,13 @@ export function RootRoute() {
         </div>
 
         <div className="home-hero__media" aria-label={homeCopy.portraitLabel[locale]}>
-          <div className="home-hero__image" />
+          <img
+            className="home-hero__image"
+            src={homeHeroImage.large}
+            alt={homeHeroImage.alt[locale]}
+            fetchPriority="high"
+            decoding="async"
+          />
           <p className="home-hero__caption">
             {homeCopy.portraitCaption[locale]}
           </p>
@@ -186,13 +185,15 @@ export function RootRoute() {
           </Link>
         </div>
 
-        <div className="date-list" aria-label="Placeholder current dates">
-          {homeCopy.dates.map((item) => (
-            <article className="date-list__item" key={item.title.en}>
-              <time className="date-list__date">{homeCopy.dateTbc[locale]}</time>
+        <div className="date-list" aria-label={homeCopy.currentTitle[locale]}>
+          {events.map((event) => (
+            <article className="date-list__item" key={event.id}>
+              <time className="date-list__date" dateTime={event.date ?? undefined}>
+                {formatDate(event.date, locale)}
+              </time>
               <div>
-                <h3 className="date-list__title">{item.title[locale]}</h3>
-                <p className="date-list__meta">{item.meta[locale]}</p>
+                <h3 className="date-list__title">{event.title}</h3>
+                <p className="date-list__meta">{event.description ?? eventMeta(event)}</p>
               </div>
             </article>
           ))}
@@ -200,7 +201,13 @@ export function RootRoute() {
       </section>
 
       <section className="home-section featured-work" aria-labelledby="featured-title">
-        <div className="featured-work__image" aria-hidden="true" />
+        <img
+          className="featured-work__image"
+          src={featuredWorkBackgroundImage.large}
+          alt={featuredWorkBackgroundImage.alt[locale]}
+          loading="lazy"
+          decoding="async"
+        />
         <div className="featured-work__content">
           <h2 id="featured-title">{homeCopy.featuredTitle[locale]}</h2>
           <p className="featured-work__title">{homeCopy.workTitle[locale]}</p>
@@ -230,17 +237,39 @@ export function RootRoute() {
         </div>
 
         <div className="news-preview__grid">
-          {homeCopy.news.map((item) => (
-            <article className="news-preview__item" key={item.title.en}>
-              <p className="news-preview__date">{homeCopy.publicationTbc[locale]}</p>
+          {newsItems.map((item) => (
+            <article className="news-preview__item" key={item.slug}>
+              <p className="news-preview__date">{item.source}</p>
               <h3>{item.title[locale]}</h3>
-              <p>{item.body[locale]}</p>
+              <p>{item.excerpt[locale]}</p>
+              <Link className="text-link" to={localizePath(`/news/${item.slug}`, locale)}>
+                {homeCopy.newsArchive[locale]}
+              </Link>
             </article>
           ))}
         </div>
       </section>
 
+      <section className="home-section gallery-preview" aria-labelledby="gallery-title">
+        <div className="home-section__header">
+          <h2 id="gallery-title">{homeCopy.galleryTitle[locale]}</h2>
+          <Link className="text-link" to={localizePath('/gallery', locale)}>
+            {homeCopy.galleryArchive[locale]}
+          </Link>
+        </div>
+
+        <div className="gallery-preview__grid">
+          {galleryPreviewImages.map((image, index) => (
+            <Link className="gallery-preview__item" to={localizePath('/gallery', locale)} key={image.slug}>
+              <img src={image.thumb} alt={image.alt[locale]} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
+              <span>{image.category[locale]}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       <section className="home-section about-preview" aria-labelledby="about-title">
+        <img className="about-preview__image" src={portraitImage.thumb} alt={portraitImage.alt[locale]} loading="lazy" decoding="async" />
         <div>
           <h2 id="about-title">{homeCopy.aboutTitle[locale]}</h2>
           <p className="about-preview__copy">
@@ -252,14 +281,17 @@ export function RootRoute() {
         </Link>
       </section>
 
-      <section className="home-section contact-preview" aria-labelledby="contact-title">
-        <h2 id="contact-title">{homeCopy.contactTitle[locale]}</h2>
-        <p>
-          {homeCopy.contactCopy[locale]}
-        </p>
-        <Link className="text-link text-link--strong" to={localizePath('/contact', locale)}>
-          {homeCopy.contactAction[locale]}
-        </Link>
+      <section className="home-section contact-preview contact-preview--image" aria-labelledby="contact-title">
+        <img className="contact-preview__image" src={contactBackgroundImage.large} alt={contactBackgroundImage.alt[locale]} loading="lazy" decoding="async" />
+        <div className="contact-preview__content">
+          <h2 id="contact-title">{homeCopy.contactTitle[locale]}</h2>
+          <p>
+            {homeCopy.contactCopy[locale]}
+          </p>
+          <Link className="text-link text-link--strong" to={localizePath('/contact', locale)}>
+            {homeCopy.contactAction[locale]}
+          </Link>
+        </div>
       </section>
     </div>
   );

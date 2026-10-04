@@ -4,8 +4,10 @@ import type { Database } from '../lib/database.types';
 type Tables = Database['public']['Tables'];
 
 export type AdminWork = Tables['works']['Row'];
+export type AdminEvent = Tables['events']['Row'];
 export type AdminWorkMedia = Tables['work_media']['Row'];
 export type AdminWorkStatus = AdminWork['status'];
+export type AdminEventStatus = AdminEvent['status'];
 export type AdminMediaType = AdminWorkMedia['media_type'];
 export type AdminMediaBucket = AdminWorkMedia['storage_bucket'];
 export type AdminWorkInput = Pick<AdminWork,
@@ -13,6 +15,9 @@ export type AdminWorkInput = Pick<AdminWork,
   | 'duration' | 'description_de' | 'description_en' | 'featured' | 'sort_order' | 'status'>;
 export type AdminMediaInput = Pick<AdminWorkMedia,
   'title_de' | 'title_en' | 'duration' | 'sort_order' | 'status'>;
+export type AdminEventInput = Pick<AdminEvent,
+  'event_date' | 'city' | 'venue' | 'event_title_de' | 'event_title_en' | 'type_de' | 'type_en'
+  | 'description_de' | 'description_en' | 'external_link' | 'featured' | 'status' | 'work_id'>;
 
 export type AdminWorkDetail = AdminWork & {
   media: AdminWorkMedia[];
@@ -69,6 +74,71 @@ export async function readAdminWorks(): Promise<AdminWork[] | null> {
     .select('*')
     .order('sort_order').order('year', { ascending: false, nullsFirst: false });
   if (error) throw new Error('Works could not be loaded');
+  return data;
+}
+
+export async function readAdminWorkOptions(): Promise<Pick<AdminWork, 'id' | 'title_de' | 'title_en' | 'year'>[]> {
+  const client = assertSupabase();
+  const { data, error } = await client
+    .from('works')
+    .select('id, title_de, title_en, year')
+    .order('sort_order')
+    .order('year', { ascending: false, nullsFirst: false });
+  if (error) throw new Error('Work options could not be loaded');
+  return data;
+}
+
+export async function readAdminEvents(): Promise<AdminEvent[] | null> {
+  const client = assertSupabase();
+
+  const { data: user, error: userError } = await client.auth.getUser();
+  if (userError || !user.user) throw new Error('Session could not be verified');
+
+  const { data: allowed, error: accessError } = await client.rpc('is_admin');
+  if (accessError) throw new Error('Admin access could not be verified');
+  if (!allowed) return null;
+
+  const { data, error } = await client
+    .from('events')
+    .select('*')
+    .order('event_date', { ascending: false, nullsFirst: false })
+    .order('updated_at', { ascending: false });
+  if (error) throw new Error('Events could not be loaded');
+  return data;
+}
+
+export async function createAdminEvent(input: AdminEventInput): Promise<AdminEvent> {
+  const client = assertSupabase();
+  const { data, error } = await client
+    .from('events')
+    .insert(input)
+    .select('*')
+    .single();
+  if (error || !data) throw new Error('Event could not be created');
+  return data;
+}
+
+export async function updateAdminEvent(eventId: string, input: AdminEventInput): Promise<AdminEvent> {
+  const client = assertSupabase();
+  const { data, error } = await client
+    .from('events')
+    .update(input)
+    .eq('id', eventId)
+    .select('*')
+    .single();
+  if (error || !data) throw new Error('Event could not be saved');
+  return data;
+}
+
+export async function updateAdminEventStatus(eventId: string, status: AdminEventStatus): Promise<AdminEvent> {
+  const client = assertSupabase();
+  const { data, error } = await client
+    .from('events')
+    .update({ status })
+    .eq('id', eventId)
+    .select('*')
+    .single();
+  if (error || !data) throw new Error('Event status could not be saved');
   return data;
 }
 

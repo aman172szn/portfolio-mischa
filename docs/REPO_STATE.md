@@ -1,6 +1,6 @@
 # Repository Current State
 
-Last updated: 2026-10-03
+Last updated: 2026-10-05
 
 ## Project
 
@@ -8,7 +8,7 @@ Mischa Tangian Portfolio
 
 ## Current Phase
 
-Supabase backend connected / Admin works editing complete
+Supabase backend connected / Gallery and optimized photography complete
 
 The project has been restarted from a clean foundation.
 
@@ -22,7 +22,7 @@ Build a clean, maintainable, high-performance bilingual portfolio and digital ar
 
 Current focus:
 
-`T0009D - Admin Works Editing and Media Uploads` completed; next is `T0010 - Dates / Concert Archive`.
+`T0011A - Gallery and Browser-Ready Photography` completed; dates do not need a calendar-grid overview at this stage.
 
 ---
 
@@ -40,6 +40,10 @@ Current focus:
 - `T0009A - Supabase Client Integration`
 - `T0009C - Admin Dashboard Foundation`
 - `T0009D - Admin Works Editing and Media Uploads`
+- `T0010A - Public Dates Data and Page`
+- `T0010B - Admin Dates Foundation`
+- `T0011 - News + Archive`
+- `T0011A - Gallery and Browser-Ready Photography`
 
 ## Current Implementation Status
 
@@ -47,7 +51,7 @@ Current focus:
 - Global design tokens are available through CSS variables.
 - Shared site shell is implemented with header, desktop navigation, mobile navigation, DE/EN placeholder, page frame, and footer.
 - Homepage sections are implemented with clearly marked placeholder content.
-- Minimal route placeholders exist for Works, Dates, News, About, and Contact.
+- Minimal route placeholders exist for About and Contact.
 - Locale-prefixed routing is implemented for `/de` and `/en`, with `/` redirecting to German by default.
 - The header language switch preserves the current page where practical.
 - Navigation, route placeholders, homepage placeholder content, and footer copy render in the active locale.
@@ -78,7 +82,17 @@ Current focus:
 - WATER and The Order of Time MP3 recordings and scores have been uploaded and verified by the project owner.
 - `/admin` provides DE/EN email/password login, session restoration, sign-out, and an allowlist-protected works list including drafts and archived works.
 - `/admin` now supports work creation/editing, draft/publish/archive status changes, direct media uploads to Supabase Storage, ordered media metadata, and primary audio/score/photo selection.
+- `/admin` now includes a Dates section for event listing/filtering, create/edit forms, draft/publish/archive status changes, related work selection, external links, and homepage featured toggles.
 - Browser regression checks use mocked Auth/data responses; real upload and edit verification should be performed with the allowlisted admin account.
+- `/dates` now reads published Supabase events with local fallback placeholders, separates upcoming and archive entries, and the homepage dates preview uses the same event data source.
+- Public Dates uses an editorial chronological list for visitors; a calendar-grid admin overview is not currently planned.
+- `/news` now renders a curated bilingual archive from supplied `news.txt` press material, with individual article routes at `/news/:slug`.
+- Homepage news preview now surfaces supplied press/news material instead of placeholder cards.
+- News is not admin-managed at this stage by project-owner decision.
+- Supplied `pictures-sent` images have been inspected and optimized into browser-ready public gallery variants under `public/images/gallery`.
+- Raw supplied photography is about 171 MB; optimized thumbnail + large gallery variants are about 11.9 MB total.
+- Homepage now uses a supplied conducting image as the main visual and a supplied portrait in the about preview.
+- `/gallery` provides a lazy/progressive-loading image archive using optimized files, keeping Supabase bandwidth out of the static gallery path.
 
 ## Current Blocker
 
@@ -96,6 +110,8 @@ No current implementation blocker. Hosted backend/public media are connected, an
 - Dates / Calendar / Termine section is required.
 - News section and news archive are required.
 - Homepage should surface recent news.
+- News should use supplied Mischa press material and does not currently need admin add/remove tools.
+- Static gallery photography should use optimized public assets; works-specific media remains admin/Supabase-managed.
 - Direct music playback on the website is preferred.
 - Every track should be uploaded directly to the site by Mischa through an admin panel.
 - Music should not rely primarily on visually embedded third-party players.

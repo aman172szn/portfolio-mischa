@@ -1,5 +1,7 @@
 node_modules/
 all_works/
+pictures-sent/
+news.txt
 dist/
 build/
 .vite/
@@ -16,4 +18,3 @@ Thumbs.db
 .vscode/settings.json
 
 *.log
-all_works/
