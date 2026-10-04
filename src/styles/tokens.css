@@ -1,5 +1,5 @@
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 
   --color-onyx-950: #0f1012;
   --color-onyx-900: #17191d;
@@ -11,17 +11,17 @@
   --color-champagne-400: #d2ba94;
   --color-line-dark: #2a2d31;
 
-  --color-paper-50: #f7f5f0;
-  --color-paper-100: #efebe2;
-  --color-ink-950: #151619;
-  --color-ink-700: #4d5055;
-  --color-ink-500: #74777c;
-  --color-brass-600: #9f8159;
-  --color-line-light: #d8d2c7;
+  --color-paper-50: #0f1012;
+  --color-paper-100: #17191d;
+  --color-ink-950: #e8e4dd;
+  --color-ink-700: #b9b2a7;
+  --color-ink-500: #7b7e8a;
+  --color-brass-600: #c5a880;
+  --color-line-light: #34312b;
   --color-white: #ffffff;
 
   --color-surface: var(--color-paper-50);
-  --color-surface-raised: var(--color-white);
+  --color-surface-raised: var(--color-paper-100);
   --color-surface-muted: var(--color-paper-100);
   --color-text: var(--color-ink-950);
   --color-text-muted: var(--color-ink-700);
@@ -75,8 +75,8 @@
   --radius-md: 0.5rem;
   --radius-pill: 999px;
 
-  --shadow-subtle: 0 0.0625rem 0.125rem rgb(15 16 18 / 8%);
-  --shadow-soft: 0 1rem 2.5rem rgb(15 16 18 / 10%);
+  --shadow-subtle: 0 0.0625rem 0.125rem rgb(0 0 0 / 24%);
+  --shadow-soft: 0 1rem 2.5rem rgb(0 0 0 / 32%);
 
   --duration-instant: 80ms;
   --duration-fast: 140ms;
