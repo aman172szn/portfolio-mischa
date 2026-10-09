@@ -7,88 +7,54 @@ export type AboutFact = {
   value: LocalizedText;
 };
 
-export type AboutSource = {
-  label: string;
-  href: string;
-};
-
 export const aboutContent = {
   title: {
-    de: 'Ueber Mischa Tangian',
+    de: 'Biographie',
     en: 'About Mischa Tangian',
   },
   summary: {
-    de: 'Mischa Tangian ist ein in Moskau geborener Komponist und Violinist, dessen Arbeit Musiktheater, zeitgenoessische Ensemblemusik, Orchesterprojekte und transkulturelle Konzertformate verbindet.',
-    en: 'Mischa Tangian is a Moscow-born composer and violinist whose work connects music theatre, contemporary ensemble writing, orchestral projects, and transcultural concert formats.',
+    de: 'Der aus Moskau stammende Komponist Mischa Tangian lebt und arbeitet seit 2013 in Berlin.',
+    en: 'Moscow-born composer Mischa Tangian has lived and worked in Berlin since 2013.',
   },
   biography: {
     de: [
-      'Tangian studierte Komposition bei Manfred Trojahn an der Robert Schumann Hochschule Duesseldorf und vertiefte seine Arbeit mit Sir George Benjamin am King\'s College London, gefoerdert durch ein DAAD-Stipendium.',
-      'Seine Musik wurde von Ensembles und Orchestern wie dem Orchestre National d\'Ile de France, dem Orchestre de Radio France, dem Russian Philharmonic Orchestra, dem Festino Chamber Choir, dem Zafraan Ensemble, dem Quatuor Diotima, dem Cosmos Quartet und dem Babylon ORCHESTRA aufgefuehrt.',
-      'Im Bereich Musiktheater entwickelte er In Transit fuer die Deutsche Oper Berlin und schrieb die Oper in absentia, beide uraufgefuehrt in der Tischlerei der Deutschen Oper. Weitere Arbeiten umfassen Carmen en los infiernos mit der Autorin Helena Tornero, Moby Dick fuer die Staatsoper Hannover und Die Nacht der Seeigel fuer die Hamburgische Staatsoper.',
-      '2016 gruendete Tangian gemeinsam mit Sofia Surgutschowa das Babylon ORCHESTRA in Berlin. Das Ensemble bringt Musikerinnen und Musiker aus dem Nahen Osten und Europa zusammen und bewegt sich zwischen zeitgenoessischer Klassik, Jazz und musikalischen Traditionen aus unterschiedlichen Regionen. Tangian praegt das Projekt als kuenstlerischer Leiter, Komponist, Arrangeur und Produzent.',
-      'Fuer seine Arbeit erhielt er unter anderem Auszeichnungen und Foerderungen der Carl Doerken Stiftung, der Deutsche Bank Stiftung und von E.On. 2014 gewann er den internationalen Opernwettbewerb Neue Szenen II der Deutschen Oper Berlin; 2018 war er Finalist des Kompositionswettbewerbs Ile de Creation in Paris. Das Debuetalbum des Babylon ORCHESTRA, das mehrere seiner Kompositionen enthaelt und von ihm produziert wurde, erhielt 2020 den Preis der deutschen Schallplattenkritik im Bereich Weltmusik.',
+      'Der aus Moskau stammende Komponist Mischa Tangian sammelte erste musikalische Erfahrungen als Geiger bei verschiedenen Orchestern, darunter dem Bundesjugendorchester, sowie in Konzerten und Wettbewerben. In den Fächern Violine und Klavier war er bereits während der Schulzeit Jungstudent an den Hochschulen Dortmund, Münster und zuletzt in Köln.',
+      'Von 2006 bis 2012 studierte er Komposition bei Manfred Trojahn an der RSH Düsseldorf und schloss sein Diplom mit Auszeichnung ab. Das ermöglichte ihm ein Masterstudium bei George Benjamin am King\'s College London, gefördert durch ein Jahresstipendium des DAAD (Deutscher Akademischer Austauschdienst).',
+      'Mischa Tangian erhielt zahlreiche Preise und Stipendien. Von 2016 bis 2018 war er Stipendiat der Akademie Musiktheater Heute der Deutschen Bank Stiftung. 2014 gewann er außerdem den 2. Internationalen Opernwettbewerb "Neue Szenen" der Deutschen Oper Berlin.',
+      'Seit 2013 lebt und arbeitet Mischa Tangian in Berlin. Für die Spielzeit 2014/15 wurde er mit zwei Projekten an der Deutschen Oper Berlin beauftragt. Zusammen mit der Regisseurin Eva Abelein entwickelte er die Musiktheatershow In Transit als Arrangeur und Komponist, worin er auch als Performer an der Violine mitwirkte. Ferner wurde seine erste Oper in absentia im April 2015 im Rahmen von "Neue Szenen II" an der Tischlerei der Deutschen Oper Berlin uraufgeführt.',
+      'Für die Spielzeit 2014/15 komponierte er die Kurzoper Carmen en los infiernos, einen Auftrag des Festival Castell Peralada in Spanien, die auch an der Neuköllner Oper Berlin und im Arts Centre St. Monica in Barcelona gezeigt wurde. Im September 2016 wurde die Kinderoper Moby Dick in Hannover uraufgeführt, ein Auftrag des Staatstheaters Hannover mit einem Libretto von Dorothea Hartmann.',
+      'Während seiner Zeit als Stipendiat der Akademie Musiktheater Heute der Deutschen Bank Stiftung arbeitete Tangian an einem neuen Musiktheater für die Staatsoper Hamburg. Im Rahmen des Orchesterworkshops mit Toshio Hosokawa beim Festival Manifeste 2017 in Paris wurde sein Orchesterstück Introduction to an Urban Dance Suite vom Orchestre Philharmonique de Radio France unter der Leitung von Pierre-André Valade aufgeführt.',
     ],
     en: [
-      'Tangian studied composition with Manfred Trojahn at the Robert Schumann Hochschule Duesseldorf and developed his work further with Sir George Benjamin at King\'s College London, supported by a DAAD scholarship.',
-      'His music has been performed by ensembles and orchestras including the Orchestre National d\'Ile de France, Orchestre de Radio France, Russian Philharmonic Orchestra, Festino Chamber Choir, Zafraan Ensemble, Quatuor Diotima, Cosmos Quartet, and Babylon ORCHESTRA.',
-      'In music theatre, he developed In Transit for Deutsche Oper Berlin and wrote the opera in absentia, both premiered at the Tischlerei of Deutsche Oper Berlin. Further works include Carmen en los infiernos with writer Helena Tornero, Moby Dick for Staatsoper Hannover, and Die Nacht der Seeigel for Hamburg State Opera.',
-      'In 2016, Tangian co-founded Babylon ORCHESTRA in Berlin with Sofia Surgutschowa. The ensemble brings together musicians from the Middle East and Europe and works between contemporary classical music, jazz, and musical traditions from different regions. Tangian shapes the project as artistic director, composer, arranger, and producer.',
-      'His work has received awards and support from institutions including the Carl Doerken Foundation, Deutsche Bank Foundation, and E.On. In 2014 he won Deutsche Oper Berlin\'s international opera competition Neue Szenen II; in 2018 he was a finalist in the Ile de Creation composition competition in Paris. Babylon ORCHESTRA\'s debut album, which includes several of his compositions and was produced by him, received the German Record Critics\' Award for best world music album in 2020.',
+      'Moscow-born composer Mischa Tangian gained his first musical experience as a violinist in various orchestras, including the Bundesjugendorchester, as well as in concerts and competitions. While still at school, he was a junior student in violin and piano at the music academies in Dortmund, Münster, and later Cologne.',
+      'From 2006 to 2012 he studied composition with Manfred Trojahn at the RSH Düsseldorf and completed his diploma with distinction. This enabled him to pursue a master\'s degree with George Benjamin at King\'s College London, supported by a one-year DAAD scholarship.',
+      'Mischa Tangian has received numerous prizes and scholarships. From 2016 to 2018 he was a fellow of the Deutsche Bank Foundation\'s Akademie Musiktheater Heute. In 2014 he also won Deutsche Oper Berlin\'s 2nd International Opera Competition "Neue Szenen".',
+      'Since 2013, Mischa Tangian has lived and worked in Berlin. For the 2014/15 season he was commissioned for two projects at Deutsche Oper Berlin. Together with director Eva Abelein, he developed the music-theatre show In Transit as arranger and composer, also appearing as a violin performer. His first opera, in absentia, premiered in April 2015 as part of "Neue Szenen II" at the Tischlerei of Deutsche Oper Berlin.',
+      'For the 2014/15 season he composed the short opera Carmen en los infiernos, commissioned by Festival Castell Peralada in Spain, which was also shown at Neuköllner Oper Berlin and at Arts Centre St. Monica in Barcelona. In September 2016, the children\'s opera Moby Dick premiered in Hanover, commissioned by Staatstheater Hannover with a libretto by Dorothea Hartmann.',
+      'During his fellowship with the Deutsche Bank Foundation\'s Akademie Musiktheater Heute, Tangian worked on a new music-theatre piece for Staatsoper Hamburg. As part of the orchestral workshop with Toshio Hosokawa at the 2017 Manifeste Festival in Paris, his orchestral work Introduction to an Urban Dance Suite was performed by the Orchestre Philharmonique de Radio France under Pierre-André Valade.',
     ],
-  },
-  noteTitle: {
-    de: 'Redaktionelle Stimme',
-    en: 'Editorial voice',
-  },
-  note: {
-    de: 'Die Biografie ist bewusst in der dritten Person formuliert. So funktioniert sie auf Mischas eigener Website, kann aber auch von Veranstaltern, Presse und Institutionen direkt verwendet werden.',
-    en: 'The biography is intentionally written in the third person. That works on Mischa\'s own site while also making the text reusable by presenters, press, and institutions.',
   },
   factsTitle: {
     de: 'Kurzprofil',
     en: 'Profile',
-  },
-  sourcesTitle: {
-    de: 'Quellen',
-    en: 'Sources',
   },
 } as const;
 
 export const aboutFacts: AboutFact[] = [
   {
     label: { de: 'Rolle', en: 'Role' },
-    value: { de: 'Komponist, Violinist, kuenstlerischer Leiter', en: 'Composer, violinist, artistic director' },
+    value: { de: 'Komponist', en: 'Composer' },
   },
   {
-    label: { de: 'Geboren', en: 'Born' },
+    label: { de: 'Herkunft', en: 'Origin' },
     value: { de: 'Moskau', en: 'Moscow' },
   },
   {
+    label: { de: 'In Berlin seit', en: 'Berlin since' },
+    value: { de: '2013', en: '2013' },
+  },
+  {
     label: { de: 'Ausbildung', en: 'Studies' },
-    value: { de: 'Robert Schumann Hochschule Duesseldorf; King\'s College London', en: 'Robert Schumann Hochschule Duesseldorf; King\'s College London' },
-  },
-  {
-    label: { de: 'Ensemble', en: 'Ensemble' },
-    value: { de: 'Mitgruender des Babylon ORCHESTRA', en: 'Co-founder of Babylon ORCHESTRA' },
-  },
-];
-
-export const aboutSources: AboutSource[] = [
-  {
-    label: 'Rundfunk-Sinfonieorchester Berlin',
-    href: 'https://www.rsb-online.de/en/artists/mischa-tangian/',
-  },
-  {
-    label: 'Babylon ORCHESTRA',
-    href: 'https://www.babylonorchestra.com/who-we-are',
-  },
-  {
-    label: 'Deutsche Oper Berlin',
-    href: 'https://deutscheoperberlin.de/en_EN/mein-seelenort_micha-tangian',
-  },
-  {
-    label: 'concerti.de',
-    href: 'https://www.concerti.de/portraets/babylon-orchestra/',
+    value: { de: 'RSH Düsseldorf; King\'s College London', en: 'RSH Düsseldorf; King\'s College London' },
   },
 ];

@@ -735,8 +735,8 @@ Status: DONE
 
 ### Goal
 
-Build the public About page with a professional biography based on verified public
-sources and supplied photography.
+Build the public About page with the biography supplied by the client and supplied
+photography.
 
 ### Dependencies
 
@@ -744,16 +744,16 @@ T0006, T0011A.
 
 ### Requirements
 
-- third-person professional biography suitable for Mischa's own site and press reuse
+- third-person professional biography supplied by the client
 - bilingual DE/EN copy
 - portrait image from optimized public gallery assets
 - concise profile facts
-- visible source links for externally verified biography facts
-- no private-life claims, birth year, or other unsourced details
+- no public-source/source-link framing once client biography is supplied
 
 ### Verification
 
 Lint/build and browser smoke checks passed for `/de/about` and `/en/about`.
+Biography was replaced with the client-supplied German version plus an English translation.
 
 ---
 

@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 
 import { getLocale } from '../i18n';
-import { aboutContent, aboutFacts, aboutSources } from '../../content/about';
+import { aboutContent, aboutFacts } from '../../content/about';
 import { portraitImage } from '../../content/gallery';
 
 export function AboutRoute() {
@@ -45,23 +45,6 @@ export function AboutRoute() {
             </dl>
           </section>
 
-          <section className="about-panel about-panel--note" aria-labelledby="about-note-title">
-            <h2 id="about-note-title">{aboutContent.noteTitle[locale]}</h2>
-            <p>{aboutContent.note[locale]}</p>
-          </section>
-
-          <section className="about-panel" aria-labelledby="about-sources-title">
-            <h2 id="about-sources-title">{aboutContent.sourcesTitle[locale]}</h2>
-            <ul className="about-sources">
-              {aboutSources.map((source) => (
-                <li key={source.href}>
-                  <a href={source.href} target="_blank" rel="noreferrer">
-                    {source.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
         </aside>
       </div>
     </article>
