@@ -1,6 +1,6 @@
 # Repository Current State
 
-Last updated: 2026-10-05
+Last updated: 2026-10-08
 
 ## Project
 
@@ -8,7 +8,7 @@ Mischa Tangian Portfolio
 
 ## Current Phase
 
-Supabase backend connected / Gallery and optimized photography complete
+Supabase backend connected / About page complete
 
 The project has been restarted from a clean foundation.
 
@@ -22,7 +22,7 @@ Build a clean, maintainable, high-performance bilingual portfolio and digital ar
 
 Current focus:
 
-`T0011A - Gallery and Browser-Ready Photography` completed; dates do not need a calendar-grid overview at this stage.
+`T0012A - About Page` completed with verified public biography sources; Contact remains the next information-page slice.
 
 ---
 
@@ -44,6 +44,7 @@ Current focus:
 - `T0010B - Admin Dates Foundation`
 - `T0011 - News + Archive`
 - `T0011A - Gallery and Browser-Ready Photography`
+- `T0012A - About Page`
 
 ## Current Implementation Status
 
@@ -51,7 +52,8 @@ Current focus:
 - Global design tokens are available through CSS variables.
 - Shared site shell is implemented with header, desktop navigation, mobile navigation, DE/EN placeholder, page frame, and footer.
 - Homepage sections are implemented with clearly marked placeholder content.
-- Minimal route placeholders exist for About and Contact.
+- The About route is implemented with verified bilingual biography copy, portrait photography, profile facts, and source links.
+- A minimal route placeholder remains for Contact.
 - Locale-prefixed routing is implemented for `/de` and `/en`, with `/` redirecting to German by default.
 - The header language switch preserves the current page where practical.
 - Navigation, route placeholders, homepage placeholder content, and footer copy render in the active locale.
@@ -93,6 +95,7 @@ Current focus:
 - Raw supplied photography is about 171 MB; optimized thumbnail + large gallery variants are about 11.9 MB total.
 - Homepage now uses a supplied conducting image as the main visual and a supplied portrait in the about preview.
 - `/gallery` provides a lazy/progressive-loading image archive using optimized files, keeping Supabase bandwidth out of the static gallery path.
+- `/about` now uses a third-person professional biography based on public sources from RSB, Babylon ORCHESTRA, Deutsche Oper Berlin, and concerti.de. This voice is intentional so the page can also function as reusable press/promoter copy.
 
 ## Current Blocker
 
@@ -121,6 +124,7 @@ No current implementation blocker. Hosted backend/public media are connected, an
 - Supabase is the backend and storage system.
 - Photography is important.
 - A photograph of Mischa should appear on the website.
+- The About biography should use third-person professional voice unless Mischa explicitly asks for a first-person personal statement.
 - Supporting photographs may include instruments, orchestras, stages, and concert halls.
 - Client wants to maintain approximately 95% of normal site content without developer assistance.
 - Additional menus/submenus should remain possible later.

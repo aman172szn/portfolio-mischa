@@ -1,6 +1,7 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 
 import { SiteLayout } from './layout/SiteLayout';
+import { AboutRoute } from './routes/AboutRoute';
 import { DatesIndexRoute } from './routes/DatesIndexRoute';
 import { GalleryRoute } from './routes/GalleryRoute';
 import { NewsDetailRoute } from './routes/NewsDetailRoute';
@@ -54,7 +55,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'about',
-        element: <RoutePlaceholder label={{ de: 'Ueber', en: 'About' }} />,
+        element: <AboutRoute />,
       },
       {
         path: 'contact',

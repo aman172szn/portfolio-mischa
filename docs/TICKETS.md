@@ -709,7 +709,7 @@ T0004, T0006, T0011.
 
 ## T0012 — About + Contact
 
-Status: TODO
+Status: SPLIT
 
 ### Goal
 
@@ -725,6 +725,55 @@ T0006.
 - biography
 - contact
 - social links
+- optional CV/press downloads if supplied
+
+---
+
+## T0012A — About Page
+
+Status: DONE
+
+### Goal
+
+Build the public About page with a professional biography based on verified public
+sources and supplied photography.
+
+### Dependencies
+
+T0006, T0011A.
+
+### Requirements
+
+- third-person professional biography suitable for Mischa's own site and press reuse
+- bilingual DE/EN copy
+- portrait image from optimized public gallery assets
+- concise profile facts
+- visible source links for externally verified biography facts
+- no private-life claims, birth year, or other unsourced details
+
+### Verification
+
+Lint/build and browser smoke checks passed for `/de/about` and `/en/about`.
+
+---
+
+## T0012B — Contact Page
+
+Status: TODO
+
+### Goal
+
+Build the professional Contact page once contact details, social links, and any
+press/CV downloads are supplied or approved.
+
+### Dependencies
+
+T0012A.
+
+### Requirements
+
+- contact details
+- social/professional links
 - optional CV/press downloads if supplied
 
 ---

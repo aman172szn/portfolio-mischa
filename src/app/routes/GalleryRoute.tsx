@@ -52,17 +52,12 @@ export function GalleryRoute() {
         <figure className="gallery-card" key={image.slug}>
           <a href={image.large} target="_blank" rel="noreferrer" aria-label={image.alt[locale]}>
             <img
-              src={image.thumb}
-              srcSet={`${image.thumb} 720w, ${image.large} 1800w`}
-              sizes="(min-width: 64rem) 32vw, (min-width: 48rem) 50vw, 100vw"
+              src={image.large}
               alt={image.alt[locale]}
               loading={index < 4 ? 'eager' : 'lazy'}
               decoding="async"
             />
           </a>
-          <figcaption>
-            <span>{image.category[locale]}</span>
-          </figcaption>
         </figure>
       ))}
     </div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { getLocale, localizePath } from '../i18n';
+import { aboutContent } from '../../content/about';
 import { getHomepageEvents, type PublicEvent } from '../../content/events';
 import {
   contactBackgroundImage,
@@ -34,10 +35,6 @@ const homeCopy = {
   portraitLabel: {
     de: 'Mischa Tangian dirigiert',
     en: 'Mischa Tangian conducting',
-  },
-  portraitCaption: {
-    de: 'Ausgewaehltes Bild fuer die Startseite aus dem gelieferten Fotomaterial.',
-    en: 'Selected homepage image from the supplied photography.',
   },
   currentTitle: {
     de: 'Aktuelle Termine',
@@ -96,8 +93,8 @@ const homeCopy = {
     en: 'About',
   },
   aboutCopy: {
-    de: 'Biografietext wird erst ergaenzt, nachdem er von Mischa geliefert oder freigegeben wurde. Dieser Bereich reserviert Platz fuer eine kurze Einfuehrung und ein Portraet.',
-    en: 'Biography copy will be added only after it is supplied or approved by Mischa. This section reserves space for a concise introduction and portrait.',
+    de: aboutContent.summary.de,
+    en: aboutContent.summary.en,
   },
   aboutAction: {
     de: 'Ueber Mischa',
@@ -171,9 +168,6 @@ export function RootRoute() {
             fetchPriority="high"
             decoding="async"
           />
-          <p className="home-hero__caption">
-            {homeCopy.portraitCaption[locale]}
-          </p>
         </div>
       </section>
 
@@ -261,8 +255,7 @@ export function RootRoute() {
         <div className="gallery-preview__grid">
           {galleryPreviewImages.map((image, index) => (
             <Link className="gallery-preview__item" to={localizePath('/gallery', locale)} key={image.slug}>
-              <img src={image.thumb} alt={image.alt[locale]} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
-              <span>{image.category[locale]}</span>
+              <img src={image.large} alt={image.alt[locale]} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" />
             </Link>
           ))}
         </div>
